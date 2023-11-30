@@ -78,7 +78,7 @@ create table album(
 	constraint PK_ALBM primary key (cod),
 	constraint FK_GRAV_ALBM foreign key (cod_grav) references gravadora,
 	constraint TIPO_DA_COMPRA check (tipo_compra like 'fisica' or tipo_compra like 'download'),
-	constraint DATA_COMPRA_SEC_XXI check (dt_compra > '01/01/2000')
+	constraint DATA_COMPRA_CERTA check (dt_compra > '01/01/2000')
 
 ) on BDSpotPer_fg01;
 
@@ -93,7 +93,7 @@ create table telefone(
 create table composicao(
 	cod smallint not null,
 	nome varchar(20) not null,
-	descr varchar(100) not null,
+	descr varchar(100) not null, -- Sinfonia, ópera, sonata, concerto
 
 	constraint PK_COMPOSICAO primary key (cod)
 
@@ -136,7 +136,7 @@ create table faixa_playlist(
 create table interprete(
 	cod smallint not null,	
 	nome varchar(20) not null,
-	tipo varchar(20) not null,
+	tipo varchar(20) not null, --  orquestra, trio, quarteto, ensemble, soprano, tenor..
 
 	constraint PK_INTERP primary key (cod)
 
@@ -173,7 +173,7 @@ create table faixa_compositor(
 
 create table periodo_musc(
 	cod smallint not null,
-	descr varchar(100) not null,
+	descr varchar(100) not null, --barroco, clássico, romântico, etc..
 	intervalo varchar(30) not null, 
 
 	constraint PK_PERIODO primary key (cod)
@@ -188,3 +188,38 @@ create table compositor_periodo_music(
 	constraint FK_PERIODO_CPM foreign key (cod_periodo) references periodo_musc
 
 ) on BDSpotPer_fg01;
+
+
+
+
+-- PRIMEIRA RESTRIÇÃO:
+--  Um álbum, com faixas de músicas do período barroco, só pode ser inserido no
+--  banco de dados, caso o tipo de gravação seja DDD.
+
+
+
+
+-- SEGUNDA RESTRIÇÃO:
+-- Um álbum não pode ter mais que 64 faixas (músicas)
+
+
+
+
+-- TERCEIRA RESTRIÇÃO: (num ja foi resolvido?)
+-- No caso de remoção de um álbum do banco de dados, todas as suas faixas
+-- devem ser removidas. Lembre-se que faixas podem apresentar, por sua vez,
+-- outros relacionamentos.
+
+
+
+
+-- QUARTA RESTRIÇÃO
+-- O preço de compra de um álbum não dever ser superior a três vezes a média
+-- do preço de compra de álbuns, com todas as faixas com tipo de gravação
+-- DDD.
+
+
+
+
+
+
