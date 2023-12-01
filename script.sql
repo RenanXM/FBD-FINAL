@@ -78,120 +78,124 @@ CREATE TABLE Album(
 	dt_gravacao DATE NOT NULL,
 	
 	CONSTRAINT PK_ALBUM PRIMARY KEY (codigo),
-	CONSTRAINT FK_GRAVADORA FOREIGN KEY (fk_codigo_gravadora) REFERENCES Gravadora,
+	CONSTRAINT FK_GRAVADORA_A FOREIGN KEY (fk_codigo_gravadora) REFERENCES Gravadora,
 	CONSTRAINT TIPO_COMPRA CHECK (tipo_compra LIKE 'fisica' OR tipo_compra LIKE 'download'),
 	CONSTRAINT DATA_COMPRA CHECK (dt_compra > '01/01/2000')
 
 ) ON BDSpotPer_fg01;
 
-CREATE TABLE telefone(
+CREATE TABLE Telefone(
 	numero VARCHAR (13) NOT NULL,
-	cod_grav INTEGER  NOT NULL,
-	CONSTRAINT PK_TEL PRIMARY KEY (numero),
-	CONSTRAINT FK_GRAV_TEL FOREIGN KEY (cod_grav) REFERENCES gravadora
+	codigo_gravadora INTEGER  NOT NULL,
+	CONSTRAINT PK_TELEFONE PRIMARY KEY (numero),
+	CONSTRAINT FK_GRAVADORA_T FOREIGN KEY (codigo_gravadora) REFERENCES Gravadora
 
 ) ON BDSpotPer_fg01;
 
-CREATE TABLE composicao(
-	cod INTEGER  NOT NULL,
+CREATE TABLE Composicao(
+	codigo INTEGER  NOT NULL,
 	nome VARCHAR (20) NOT NULL,
-	descr VARCHAR (100) NOT NULL, -- Sinfonia, ópera, sonata, concerto
+	descricao VARCHAR (100) NOT NULL, -- Sinfonia, ópera, sonata, concerto
 
-	CONSTRAINT PK_COMPOSICAO PRIMARY KEY (cod)
+	CONSTRAINT PK_COMPOSICAO PRIMARY KEY (codigo)
 
 ) ON BDSpotPer_fg01;
 
-CREATE TABLE faixa(
-	cod_faixa INTEGER  NOT NULL,
+CREATE TABLE Faixa(
+	codigo_faixa INTEGER  NOT NULL,
 	numero INTEGER  NOT NULL,
-	cod_album INTEGER  NOT NULL,
-	descr VARCHAR (100) NOT NULL, 
+	codigo_album INTEGER  NOT NULL,
+	descricao VARCHAR (100) NOT NULL, 
 	tempo time(0) NOT NULL,
 	tipo_composicao INTEGER  NOT NULL,
-	tipo_grav VARCHAR (3) NOT NULL
+	tipo_gravacao VARCHAR (3) NOT NULL
 
-	CONSTRAINT PK_FAIXA PRIMARY KEY (cod_faixa)
-	CONSTRAINT FK_ALBUM_FAIXA FOREIGN KEY (cod_album) REFERENCES album ON DELETE CASCADE
-	CONSTRAINT ADD_OU_DDD CHECK (tipo_grav LIKE 'ADD' OR tipo_grav LIKE 'DDD')
+	CONSTRAINT PK_FAIXA PRIMARY KEY (codigo_faixa)
+	CONSTRAINT FK_ALBUM_F FOREIGN KEY (codigo_album) REFERENCES Album ON DELETE CASCADE
+	CONSTRAINT ADD_OU_DDD CHECK (tipo_gravacao LIKE 'ADD' OR tipo_gravacao LIKE 'DDD')
 	
 ) ON BDSpotPer_fg02;
 
-CREATE TABLE playlist(
-	cod INTEGER  NOT NULL,
+CREATE TABLE Playlist(
+	codigo INTEGER  NOT NULL,
 	nome VARCHAR (20) NOT NULL,
-	dt_criacao DATE NOT NULL,
-	dt_ult_reprod DATE NOT NULL,
-	num_reprod INTEGER  NOT NULL,
+	data_criacao DATE NOT NULL,
+	data_ultima_reproducao DATE NOT NULL,
+	numero_reproducao INTEGER  NOT NULL,
 	tempo time(0) NOT NULL,
 
-	CONSTRAINT PK_PLAYLIST PRIMARY KEY (cod)
+	CONSTRAINT PK_PLAYLIST PRIMARY KEY (codigo)
 
 ) ON BDSpotPer_fg02;
 
-CREATE TABLE faixa_playlist(
+CREATE TABLE Faixa_Playlist(
 	numero_faixa INTEGER  NOT NULL,
-	cod_album INTEGER  NOT NULL,
-	fk_cod_playlist INTEGER  NOT NULL,
-	fk_cod_faixa INTEGER  NOT NULL
+	codigo_album INTEGER  NOT NULL,
+	fk_codigo_playlist INTEGER  NOT NULL,
+	fk_codigo_faixa INTEGER  NOT NULL,
 
-	CONSTRAINT FK_PLAYLIST_FP FOREIGN KEY (fk_cod_playlist) REFERENCES playlist
-	CONSTRAINT FK_FAIXA_FP FOREIGN KEY (fk_cod_faixa) REFERENCES faixa
+	CONSTRAINT FK_PLAYLIST_FP FOREIGN KEY (fk_codigo_playlist) REFERENCES Playlist
+	CONSTRAINT FK_FAIXA_FP FOREIGN KEY (fk_codigo_faixa) REFERENCES Faixa
 
 ) ON BDSpotPer_fg02;
 
-CREATE TABLE interprete(
-	cod INTEGER  NOT NULL,	
+CREATE TABLE Interprete(
+	codigo INTEGER  NOT NULL,	
 	nome VARCHAR (20) NOT NULL,
 	tipo VARCHAR (20) NOT NULL, --  orquestra, trio, quarteto, ensemble, soprano, tenor..
 
-	CONSTRAINT PK_INTERP PRIMARY KEY (cod)
+	CONSTRAINT PK_INTERPRETE PRIMARY KEY (codigo)
 
 ) ON BDSpotPer_fg01;
 
-CREATE TABLE faixa_interprete(
-	numero_faixa INTEGER  NOT NULL,
-	cod_album INTEGER  NOT NULL,
-	cod_interp INTEGER  NOT NULL,
+CREATE TABLE Faixa_Interprete(
+	numero_faixa INTEGER NOT NULL,
+	codigo_album INTEGER NOT NULL,
+	fk_codigo_interprete INTEGER NOT NULL,
+	fk_codigo_faixa INTEGER NOT NULL,
 
-	CONSTRAINT FK_INTERP_I FOREIGN KEY (cod_interp) REFERENCES interprete
+	CONSTRAINT FK_INTERPRETE_FI FOREIGN KEY (fk_codigo_interprete) REFERENCES Interprete
+	CONSTRAINT FK_FAIXA_FI FOREIGN KEY (fk_codigo_faixa) REFERENCES Faixa
 
 ) ON BDSpotPer_fg01;
 
-CREATE TABLE compositor(
-	cod INTEGER  NOT NULL,	
+CREATE TABLE Compositor(
+	codigo INTEGER  NOT NULL,	
 	nome VARCHAR (20) NOT NULL,
-	local_nasc VARCHAR (100) NOT NULL,
-	dt_nasc DATE NOT NULL, 
-	dt_morte date,
+	local_nascimento VARCHAR (100) NOT NULL,
+	data_nascimento DATE NOT NULL, 
+	data_morte DATE,
 
-	CONSTRAINT PK_COMPOSITOR PRIMARY KEY (cod)
-
-) ON BDSpotPer_fg01;
-
-CREATE TABLE faixa_compositor(
-	numero_faixa INTEGER  NOT NULL,
-	cod_album INTEGER  NOT NULL,
-	cod_composit INTEGER  NOT NULL,
-
-	CONSTRAINT FK_COMPOSIT_C FOREIGN KEY (cod_composit) REFERENCES compositor
+	CONSTRAINT PK_COMPOSITOR PRIMARY KEY (codigo)
 
 ) ON BDSpotPer_fg01;
 
-CREATE TABLE periodo_musc(
-	cod INTEGER  NOT NULL,
-	descr VARCHAR (100) NOT NULL, --barroco, clássico, romântico, etc..
+CREATE TABLE Faixa_Compositor(
+	numero_faixa INTEGER NOT NULL,
+	codigo_album INTEGER NOT NULL,
+	fk_codigo_compositor INTEGER NOT NULL,
+	fk_codigo_faixa INTEGER NOT NULL,
+
+	CONSTRAINT FK_COMPOSITOR_FC FOREIGN KEY (fk_codigo_compositor) REFERENCES Compositor
+	CONSTRAINT FK_FAIXA_FC FOREIGN KEY (fk_codigo_faixa) REFERENCES Faixa
+
+) ON BDSpotPer_fg01;
+
+CREATE TABLE Periodo_Musical(
+	codigo INTEGER NOT NULL,
+	descricao VARCHAR (100) NOT NULL, --barroco, clássico, romântico, etc..
 	intervalo VARCHAR (30) NOT NULL, 
 
-	CONSTRAINT PK_PERIODO PRIMARY KEY (cod)
+	CONSTRAINT PK_PERIODO_MUSICAL PRIMARY KEY (codigo)
 
 ) ON BDSpotPer_fg01;
 
-CREATE TABLE compositor_periodo_music(
-	cod_composit INTEGER  NOT NULL,
-	cod_periodo INTEGER  NOT NULL,
+CREATE TABLE Compositor_Periodo_Musical(
+	codigo_compositor INTEGER NOT NULL,
+	codigo_periodo INTEGER NOT NULL,
 
-	CONSTRAINT FK_COMPOSIT_CPM FOREIGN KEY (cod_composit) REFERENCES compositor,
-	CONSTRAINT FK_PERIODO_CPM FOREIGN KEY (cod_periodo) REFERENCES periodo_musc
+	CONSTRAINT FK_COMPOSITOR_CPM FOREIGN KEY (codigo_compositor) REFERENCES Compositor,
+	CONSTRAINT FK_PERIODO_CPM FOREIGN KEY (codigo_periodo) REFERENCES Periodo_Musical
 
 ) ON BDSpotPer_fg01;
 
