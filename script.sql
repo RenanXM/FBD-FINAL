@@ -102,6 +102,7 @@ create table composicao(
 ) on BDSpotPer_fg01;
 
 create table faixa(
+	cod_faixa smallint not null,
 	numero smallint not null,
 	cod_album smallint not null,
 	descr varchar(100) not null, 
@@ -109,7 +110,8 @@ create table faixa(
 	tipo_composicao smallint not null,
 	tipo_grav varchar(3) not null
 
-	constraint FK_ALBUM_FAIXA foreign key (cod_album) references album on delete cascade,
+	constraint PK_FAIXA primary key (cod_faixa)
+	constraint FK_ALBUM_FAIXA foreign key (cod_album) references album on delete cascade
 	constraint ADD_OU_DDD check (tipo_grav like 'ADD' or tipo_grav like 'DDD')
 	
 ) on BDSpotPer_fg02;
@@ -129,9 +131,11 @@ create table playlist(
 create table faixa_playlist(
 	numero_faixa smallint not null,
 	cod_album smallint not null,
-	cod_playlist smallint not null,
+	fk_cod_playlist smallint not null,
+	fk_cod_faixa smallint not null
 
-	constraint FK_PLAYLIST_FP foreign key (cod_playlist) references playlist
+	constraint FK_PLAYLIST_FP foreign key (fk_cod_playlist) references playlist
+	constraint FK_FAIXA_FP foreign key (fk_cod_faixa) references faixa
 
 ) on BDSpotPer_fg02;
 
@@ -192,12 +196,23 @@ create table compositor_periodo_music(
 ) on BDSpotPer_fg01;
 
 -------------------------------------------------------------------------------------------------------------------------
-
-create view view_playlists as
+-- Criar uma visão materializada que tem como atributos o nome da playlist e a quantidade de álbuns que a compõem.
+create view view_playlists with schemabinding
+as
 	select p.nome as "Nome da Playlist", count(fp.numero_faixa) AS "Quantidade de Faixas" 
 	from playlist p 
 	join faixa_playlist fp on p.cod = fp.cod_playlist
 	group by p.nome
+
+
+-- Defina um índice primário para a tabela de Faixas sobre o atributo código do álbum. 
+-- Defina um índice secundário para a mesma tabela sobre o atributo tipo de composição. Os dois com taxas de preenchimento máxima.
+create clustered index idx_cod_album
+on faixa (cod_album) FILLFACTOR=100
+
+create unclustered intex idx_tipo_composicao
+on faixa (tipo_composicao) FILLFACTOR=100
+
 
 -- PRIMEIRA RESTRIÇÃO:
 --  Um álbum, com faixas de músicas do período barroco, só pode ser inserido no
@@ -227,10 +242,6 @@ create view view_playlists as
 
 
 
--- Defina um índice primário para a tabela de Faixas sobre o atributo código do álbum. 
--- Defina um índice secundário para a mesma tabela sobre o atributo tipo de composição. Os dois com taxas de preenchimento máxima.
-
--- Criar uma visão materializada que tem como atributos o nome da playlist e a quantidade de álbuns que a compõem.
 
 
 -- Defina uma função que tem como parâmetro de entrada o nome (ou parte do) 
