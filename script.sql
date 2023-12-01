@@ -52,7 +52,9 @@ ON
 		FILEGROWTH = 10%                            
 	);
 
--- Alterando para o banco de dados BDSpotPer_FINAL
+-----------------------------------------------------------------------------------------------
+
+-- Alterando para o banco de dados BDSpotPer
 USE BDSpotPer;
 
 
@@ -189,8 +191,13 @@ create table compositor_periodo_music(
 
 ) on BDSpotPer_fg01;
 
+-------------------------------------------------------------------------------------------------------------------------
 
-
+create view view_playlists as
+	select p.nome as "Nome da Playlist", count(fp.numero_faixa) AS "Quantidade de Faixas" 
+	from playlist p 
+	join faixa_playlist fp on p.cod = fp.cod_playlist
+	group by p.nome
 
 -- PRIMEIRA RESTRIÇÃO:
 --  Um álbum, com faixas de músicas do período barroco, só pode ser inserido no
@@ -220,6 +227,14 @@ create table compositor_periodo_music(
 
 
 
+-- Defina um índice primário para a tabela de Faixas sobre o atributo código do álbum. 
+-- Defina um índice secundário para a mesma tabela sobre o atributo tipo de composição. Os dois com taxas de preenchimento máxima.
 
+-- Criar uma visão materializada que tem como atributos o nome da playlist e a quantidade de álbuns que a compõem.
+
+
+-- Defina uma função que tem como parâmetro de entrada o nome (ou parte do) 
+-- nome do compositor e o parâmetro de saída todos os álbuns com obras 
+-- compostas pelo compositor.
 
 
