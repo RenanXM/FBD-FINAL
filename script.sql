@@ -13,7 +13,7 @@ ON
 	-- Definição do filegroup primário
 	PRIMARY
 	(
-		NAME = 'BDSpotPer',                         -
+		NAME = 'BDSpotPer',                         
 		FILENAME = 'C:\FBD_FINAL\BDSpotPer.mdf',   
 		SIZE = 5120KB,                              
 		FILEGROWTH = 1024KB                         
@@ -42,7 +42,7 @@ ON
 		SIZE = 2048KB,                              
 		MAXSIZE = 5120KB,                          
 		FILEGROWTH = 30%                            
-	),
+	)
 	-- Definição do log
 	LOG ON 
 	(
@@ -53,7 +53,7 @@ ON
 	);
 
 -- Alterando para o banco de dados BDSpotPer_FINAL
-USE BDSpotPer_FINAL;
+USE BDSpotPer;
 
 
 create table gravadora(
