@@ -58,160 +58,160 @@ ON
 USE BDSpotPer;
 
 
-create table gravadora(
-	cod smallint not null,
-	endereco varchar(100) not null,
-	pagina varchar(100) not null,
-	nome varchar(20) not null,
-	constraint PK_GRAV primary key (cod)
+CREATE TABLE Gravadora(
+	codigo INTEGER  NOT NULL,
+	endereco VARCHAR (100) NOT NULL,
+	pagina VARCHAR (100) NOT NULL,
+	nome VARCHAR (20) NOT NULL,
+	CONSTRAINT PK_GRAVADORA PRIMARY KEY (codigo)
 
-) on BDSpotPer_fg01;
+) ON BDSpotPer_fg01;
 
-create table album(
-	cod smallint not null,
-	cod_grav smallint not null,
-	nome varchar(50) not null,
-	descr varchar(100) not null, 
-	tipo_compra varchar(20) not null,
-	pr_compra dec(5,2) not null,
-	dt_compra date not null,
-	dt_gravacao date not null,
+CREATE TABLE Album(
+	codigo INTEGER  NOT NULL,
+	fk_codigo_gravadora INTEGER  NOT NULL,
+	nome VARCHAR (50) NOT NULL,
+	descricao VARCHAR (100) NOT NULL, 
+	tipo_compra VARCHAR (20) NOT NULL,
+	pr_compra DEC(5,2) NOT NULL,
+	dt_compra DATE NOT NULL,
+	dt_gravacao DATE NOT NULL,
 	
-	constraint PK_ALBM primary key (cod),
-	constraint FK_GRAV_ALBM foreign key (cod_grav) references gravadora,
-	constraint TIPO_DA_COMPRA check (tipo_compra like 'fisica' or tipo_compra like 'download'),
-	constraint DATA_COMPRA_CERTA check (dt_compra > '01/01/2000')
+	CONSTRAINT PK_ALBUM PRIMARY KEY (codigo),
+	CONSTRAINT FK_GRAVADORA FOREIGN KEY (fk_codigo_gravadora) REFERENCES Gravadora,
+	CONSTRAINT TIPO_COMPRA CHECK (tipo_compra LIKE 'fisica' OR tipo_compra LIKE 'download'),
+	CONSTRAINT DATA_COMPRA CHECK (dt_compra > '01/01/2000')
 
-) on BDSpotPer_fg01;
+) ON BDSpotPer_fg01;
 
-create table telefone(
-	numero varchar(13) not null,
-	cod_grav smallint not null,
-	constraint PK_TEL primary key (numero),
-	constraint FK_GRAV_TEL foreign key (cod_grav) references gravadora
+CREATE TABLE telefone(
+	numero VARCHAR (13) NOT NULL,
+	cod_grav INTEGER  NOT NULL,
+	CONSTRAINT PK_TEL PRIMARY KEY (numero),
+	CONSTRAINT FK_GRAV_TEL FOREIGN KEY (cod_grav) REFERENCES gravadora
 
-) on BDSpotPer_fg01;
+) ON BDSpotPer_fg01;
 
-create table composicao(
-	cod smallint not null,
-	nome varchar(20) not null,
-	descr varchar(100) not null, -- Sinfonia, ópera, sonata, concerto
+CREATE TABLE composicao(
+	cod INTEGER  NOT NULL,
+	nome VARCHAR (20) NOT NULL,
+	descr VARCHAR (100) NOT NULL, -- Sinfonia, ópera, sonata, concerto
 
-	constraint PK_COMPOSICAO primary key (cod)
+	CONSTRAINT PK_COMPOSICAO PRIMARY KEY (cod)
 
-) on BDSpotPer_fg01;
+) ON BDSpotPer_fg01;
 
-create table faixa(
-	cod_faixa smallint not null,
-	numero smallint not null,
-	cod_album smallint not null,
-	descr varchar(100) not null, 
-	tempo time(0) not null,
-	tipo_composicao smallint not null,
-	tipo_grav varchar(3) not null
+CREATE TABLE faixa(
+	cod_faixa INTEGER  NOT NULL,
+	numero INTEGER  NOT NULL,
+	cod_album INTEGER  NOT NULL,
+	descr VARCHAR (100) NOT NULL, 
+	tempo time(0) NOT NULL,
+	tipo_composicao INTEGER  NOT NULL,
+	tipo_grav VARCHAR (3) NOT NULL
 
-	constraint PK_FAIXA primary key (cod_faixa)
-	constraint FK_ALBUM_FAIXA foreign key (cod_album) references album on delete cascade
-	constraint ADD_OU_DDD check (tipo_grav like 'ADD' or tipo_grav like 'DDD')
+	CONSTRAINT PK_FAIXA PRIMARY KEY (cod_faixa)
+	CONSTRAINT FK_ALBUM_FAIXA FOREIGN KEY (cod_album) REFERENCES album ON DELETE CASCADE
+	CONSTRAINT ADD_OU_DDD CHECK (tipo_grav LIKE 'ADD' OR tipo_grav LIKE 'DDD')
 	
-) on BDSpotPer_fg02;
+) ON BDSpotPer_fg02;
 
-create table playlist(
-	cod smallint not null,
-	nome varchar(20) not null,
-	dt_criacao date not null,
-	dt_ult_reprod date not null,
-	num_reprod smallint not null,
-	tempo time(0) not null,
+CREATE TABLE playlist(
+	cod INTEGER  NOT NULL,
+	nome VARCHAR (20) NOT NULL,
+	dt_criacao DATE NOT NULL,
+	dt_ult_reprod DATE NOT NULL,
+	num_reprod INTEGER  NOT NULL,
+	tempo time(0) NOT NULL,
 
-	constraint PK_PLAYLIST primary key (cod)
+	CONSTRAINT PK_PLAYLIST PRIMARY KEY (cod)
 
-) on BDSpotPer_fg02;
+) ON BDSpotPer_fg02;
 
-create table faixa_playlist(
-	numero_faixa smallint not null,
-	cod_album smallint not null,
-	fk_cod_playlist smallint not null,
-	fk_cod_faixa smallint not null
+CREATE TABLE faixa_playlist(
+	numero_faixa INTEGER  NOT NULL,
+	cod_album INTEGER  NOT NULL,
+	fk_cod_playlist INTEGER  NOT NULL,
+	fk_cod_faixa INTEGER  NOT NULL
 
-	constraint FK_PLAYLIST_FP foreign key (fk_cod_playlist) references playlist
-	constraint FK_FAIXA_FP foreign key (fk_cod_faixa) references faixa
+	CONSTRAINT FK_PLAYLIST_FP FOREIGN KEY (fk_cod_playlist) REFERENCES playlist
+	CONSTRAINT FK_FAIXA_FP FOREIGN KEY (fk_cod_faixa) REFERENCES faixa
 
-) on BDSpotPer_fg02;
+) ON BDSpotPer_fg02;
 
-create table interprete(
-	cod smallint not null,	
-	nome varchar(20) not null,
-	tipo varchar(20) not null, --  orquestra, trio, quarteto, ensemble, soprano, tenor..
+CREATE TABLE interprete(
+	cod INTEGER  NOT NULL,	
+	nome VARCHAR (20) NOT NULL,
+	tipo VARCHAR (20) NOT NULL, --  orquestra, trio, quarteto, ensemble, soprano, tenor..
 
-	constraint PK_INTERP primary key (cod)
+	CONSTRAINT PK_INTERP PRIMARY KEY (cod)
 
-) on BDSpotPer_fg01;
+) ON BDSpotPer_fg01;
 
-create table faixa_interprete(
-	numero_faixa smallint not null,
-	cod_album smallint not null,
-	cod_interp smallint not null,
+CREATE TABLE faixa_interprete(
+	numero_faixa INTEGER  NOT NULL,
+	cod_album INTEGER  NOT NULL,
+	cod_interp INTEGER  NOT NULL,
 
-	constraint FK_INTERP_I foreign key (cod_interp) references interprete
+	CONSTRAINT FK_INTERP_I FOREIGN KEY (cod_interp) REFERENCES interprete
 
-) on BDSpotPer_fg01;
+) ON BDSpotPer_fg01;
 
-create table compositor(
-	cod smallint not null,	
-	nome varchar(20) not null,
-	local_nasc varchar(100) not null,
-	dt_nasc date not null, 
+CREATE TABLE compositor(
+	cod INTEGER  NOT NULL,	
+	nome VARCHAR (20) NOT NULL,
+	local_nasc VARCHAR (100) NOT NULL,
+	dt_nasc DATE NOT NULL, 
 	dt_morte date,
 
-	constraint PK_COMPOSITOR primary key (cod)
+	CONSTRAINT PK_COMPOSITOR PRIMARY KEY (cod)
 
-) on BDSpotPer_fg01;
+) ON BDSpotPer_fg01;
 
-create table faixa_compositor(
-	numero_faixa smallint not null,
-	cod_album smallint not null,
-	cod_composit smallint not null,
+CREATE TABLE faixa_compositor(
+	numero_faixa INTEGER  NOT NULL,
+	cod_album INTEGER  NOT NULL,
+	cod_composit INTEGER  NOT NULL,
 
-	constraint FK_COMPOSIT_C foreign key (cod_composit) references compositor
+	CONSTRAINT FK_COMPOSIT_C FOREIGN KEY (cod_composit) REFERENCES compositor
 
-) on BDSpotPer_fg01;
+) ON BDSpotPer_fg01;
 
-create table periodo_musc(
-	cod smallint not null,
-	descr varchar(100) not null, --barroco, clássico, romântico, etc..
-	intervalo varchar(30) not null, 
+CREATE TABLE periodo_musc(
+	cod INTEGER  NOT NULL,
+	descr VARCHAR (100) NOT NULL, --barroco, clássico, romântico, etc..
+	intervalo VARCHAR (30) NOT NULL, 
 
-	constraint PK_PERIODO primary key (cod)
+	CONSTRAINT PK_PERIODO PRIMARY KEY (cod)
 
-) on BDSpotPer_fg01;
+) ON BDSpotPer_fg01;
 
-create table compositor_periodo_music(
-	cod_composit smallint not null,
-	cod_periodo smallint not null,
+CREATE TABLE compositor_periodo_music(
+	cod_composit INTEGER  NOT NULL,
+	cod_periodo INTEGER  NOT NULL,
 
-	constraint FK_COMPOSIT_CPM foreign key (cod_composit) references compositor,
-	constraint FK_PERIODO_CPM foreign key (cod_periodo) references periodo_musc
+	CONSTRAINT FK_COMPOSIT_CPM FOREIGN KEY (cod_composit) REFERENCES compositor,
+	CONSTRAINT FK_PERIODO_CPM FOREIGN KEY (cod_periodo) REFERENCES periodo_musc
 
-) on BDSpotPer_fg01;
+) ON BDSpotPer_fg01;
 
 -------------------------------------------------------------------------------------------------------------------------
 -- Criar uma visão materializada que tem como atributos o nome da playlist e a quantidade de álbuns que a compõem.
-create view view_playlists with schemabinding
-as
-	select p.nome as "Nome da Playlist", count(fp.numero_faixa) AS "Quantidade de Faixas" 
-	from playlist p 
-	join faixa_playlist fp on p.cod = fp.cod_playlist
-	group by p.nome
+CREATE VIEW view_playlists WITH SCHEMABINDING
+AS
+	SELECT p.nome AS "Nome da Playlist", count(fp.numero_faixa) AS "Quantidade de Faixas" 
+	FROM playlist p 
+	JOIN faixa_playlist fp ON p.cod = fp.cod_playlist
+	GROUP BY p.nome
 
 
 -- Defina um índice primário para a tabela de Faixas sobre o atributo código do álbum. 
 -- Defina um índice secundário para a mesma tabela sobre o atributo tipo de composição. Os dois com taxas de preenchimento máxima.
-create clustered index idx_cod_album
-on faixa (cod_album) FILLFACTOR=100
+CREATE CLUSTERED INDEX idx_cod_album
+ON faixa (cod_album) FILLFACTOR=100
 
-create unclustered intex idx_tipo_composicao
-on faixa (tipo_composicao) FILLFACTOR=100
+CREATE UNCLUSTERED INDEX idx_tipo_composicao
+ON faixa (tipo_composicao) FILLFACTOR=100
 
 
 -- PRIMEIRA RESTRIÇÃO:
@@ -239,8 +239,6 @@ on faixa (tipo_composicao) FILLFACTOR=100
 -- O preço de compra de um álbum não dever ser superior a três vezes a média
 -- do preço de compra de álbuns, com todas as faixas com tipo de gravação
 -- DDD.
-
-
 
 
 
