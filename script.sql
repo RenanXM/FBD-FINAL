@@ -414,3 +414,98 @@ order by sum_qtd_playlists desc;
 
 
 
+
+-- 7d) Listar playlists, cujas faixas (todas) têm tipo de composição Concerto e período Barroco.
+
+-- View para obter as faixas do tipo "Concerto" e período "Barroco"
+
+drop view faixa_concerto_barroca
+create view faixa_concerto_barroca
+drop view faixa_concerto_barroca
+create view faixa_concerto_barroca
+as
+select f.cod_album, f.numero, co.nome
+	from composicao co inner join faixa f on co.nome like 'Concerto' and co.cod=f.tipo_composicao
+		 inner join faixa_compositor fc on f.numero=fc.numero_faixa and f.cod_album=fc.cod_album
+		 inner join compositor c on fc.cod_composit=c.cod
+		 inner join compositor_periodo_music cpm on c.cod=cpm.cod_composit
+		 inner join periodo_musc pm on cpm.cod_periodo=pm.cod and pm.descr like 'Barroco'
+	group by f.cod_album, f.numero, co.nome
+
+create function eh_concerto_barroca(@numero smallint, @album smallint)
+returns int
+as
+begin 
+	declare @retorno int
+
+	select @retorno=count(*) from faixa_concerto_barroca where @numero=numero and @album=cod_album
+	
+	return @retorno
+end
+
+create view oitod
+as
+select distinct p.cod, p.nome, p.dt_criacao, p.dt_ult_reprod, p.num_reprod
+	from playlist p inner join faixa_playlist fp on p.cod=fp.cod_playlist
+		 inner join faixa f on f.numero=fp.numero_faixa and f.cod_album=fp.cod_album
+	group by p.cod, p.nome, p.dt_criacao, p.dt_ult_reprod, p.num_reprod, p.tempo, f.numero, f.cod_album
+	having dbo.eh_concerto_barroca(f.numero, f.cod_album) = 1
+as
+select f.codigo_album, f.numero_faixa, co.nome
+from composicao co
+    inner join faixa f on co.codigo = f.tipo_composicao and co.nome = 'Concerto'
+    inner join faixa_compositor fc on f.numero_faixa = fc.numero_faixa and f.codigo_album = fc.codigo_album
+    inner join compositor c on fc.cod_composit = c.codigo
+    inner join compositor_periodo_musical cpm on c.codigo = cpm.codigo_compositor
+    inner join periodo_musical pm on cpm.codigo_periodo = pm.codigo and pm.descricao = 'Barroco'
+group by f.codigo_album, f.numero_faixa, co.nome;
+
+-- Função para verificar se todas as faixas de uma playlist são do tipo "Concerto" e do período "Barroco"
+create function eh_concerto_barroca(@numero_faixa smallint, @codigo_album smallint)
+returns int
+as
+begin 
+    declare @retorno int
+
+    select @retorno = count(*) 
+    from faixa_concerto_barroca 
+    where @numero_faixa = numero_faixa and @codigo_album = codigo_album
+    
+    return @retorno
+end
+
+-- View final para listar playlists com todas as faixas do tipo "Concerto" e do período "Barroco"
+create view seted
+as
+select p.codigo, p.nome, p.data_criacao, p.data_ultima_reproducao, p.numero_reproducao
+from playlist p
+    inner join faixa_playlist fp on p.codigo = fp.codigo_playlist
+    inner join faixa f on f.numero_faixa = fp.numero_faixa and f.codigo_album = fp.codigo_album
+group by p.codigo, p.nome, p.data_criacao, p.data_ultima_reproducao, p.numero_reproducao
+having sum(dbo.eh_concerto_barroca(f.numero_faixa, f.codigo_album)) = count(*);
+
+
+
+
+
+
+-- VIEW QUE MOSTRA AS FAIXAS DAS PLAYLISTS
+drop view faixas_playlists;
+create view faixas_playlists
+as
+select 
+    p.cod as cod_playlist, 
+    a.cod as cod_album, 
+    f.numero as numero, 
+    f.descr as descr, 
+    f.tempo as tempo, 
+    c.nome as composicao, 
+    f.tipo_grav
+from 
+    playlist p 
+    left outer join faixa_playlist fp on p.cod = fp.cod_playlist
+    inner join faixa f on fp.cod_album = f.cod_album and fp.numero_faixa = f.numero
+    inner join album a on f.cod_album = a.cod
+    inner join composicao c on f.tipo_composicao = c.cod
+group by 
+    p.cod, a.cod, f.numero, f.descr, f.tempo, c.nome, f.tipo_grav;

@@ -129,8 +129,8 @@ def question_7_menu(connection):
             try:
                 os.system("cls")
                 print("------------ITEM A------------")
-                # IMPORTANTE !!!!!!!!!!!!!!!!!!! (SERÁ QUE NÃO PODE SER UMA VIEW??)
-                table = execute_query(connection, "SELECT ?????????????")
+                # setea = view
+                table = execute_query(connection, "SELECT * FROM setea ORDER BY 2 DESC")
                 print(table)
 
                 input("\n Pressione enter para voltar")
@@ -143,8 +143,8 @@ def question_7_menu(connection):
                 os.system("cls")
                 print("------------ITEM B------------")
 
-                # IMPORTANTE !!!!!!!!!!!!!!!!!!! (SERÁ QUE NÃO PODE SER UMA VIEW??)
-                table = execute_query(connection, "SELECT ??????????")
+                #s eteb = view
+                table = execute_query(connection, "SELECT * FROM seteb")
                 print(table)
 
                 input("\n Pressione enter para voltar")
@@ -157,8 +157,8 @@ def question_7_menu(connection):
                 os.system("cls")
                 print("------------ITEM C------------")
 
-                # IMPORTANTE !!!!!!!!!!!!!!!!!!! (SERÁ QUE NÃO PODE SER UMA VIEW??)
-                table = execute_query(connection, "SELECT ??????????")
+                # setec = view
+                table = execute_query(connection, "SELECT * FROM setec")
                 print(table)
 
                 input("\n Pressione enter para voltar")
@@ -172,8 +172,8 @@ def question_7_menu(connection):
                 os.sytem("cls")
                 print("------------ITEM D------------")
 
-                # IMPORTANTE !!!!!!!!!!!!!!!!!!! (SERÁ QUE NÃO PODE SER UMA VIEW??)
-                table = execute_query(connection, "SELECT ?????????????")
+                # seted = view
+                table = execute_query(connection, "SELECT * FROM seted")
                 print(table)
 
                 input("\n Pressione enter para voltar")
@@ -228,6 +228,8 @@ def playlist_tracks_menu(connection, playlists):
 
     # Tracks será um DataFrame contendo as informações das faixas relacionadas ao álbum especificado
     # pelo código album_code. O DataFrame terá colunas: numero, descr, tempo, composicao, e tipo_grav.
+
+    # faixas_playlists = view implementada no .sql
     tracks = execute_query(connection, f"SELECT numero, descr, tempo, composicao, tipo_grav "
                                        f"FROM faixas_playlists WHERE cod_playlist = {playlist_code}")
     
