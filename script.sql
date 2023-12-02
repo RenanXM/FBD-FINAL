@@ -200,31 +200,14 @@ CREATE TABLE Compositor_Periodo_Musical(
 ) ON BDSpotPer_fg01;
 
 -------------------------------------------------------------------------------------------------------------------------
--- Criar uma visão materializada que tem como atributos o nome da playlist e a quantidade de álbuns que a compõem.
-CREATE VIEW view_playlists WITH SCHEMABINDING
-AS
-	SELECT p.nome AS "Nome da Playlist", count(fp.numero_faixa) AS "Quantidade de Faixas" 
-	FROM playlist p 
-	JOIN faixa_playlist fp ON p.cod = fp.cod_playlist
-	GROUP BY p.nome
-
-
-
-
--- Defina um índice primário para a tabela de Faixas sobre o atributo código do álbum. 
--- Defina um índice secundário para a mesma tabela sobre o atributo tipo de composição. Os dois com taxas de preenchimento máxima.
-CREATE CLUSTERED INDEX idx_cod_album
-ON faixa (cod_album) FILLFACTOR=100
-
-CREATE UNCLUSTERED INDEX idx_tipo_composicao
-ON faixa (tipo_composicao) FILLFACTOR=100
 
 
 
 
 
 
--- PRIMEIRA RESTRIÇÃO:
+
+-- PRIMEIRA RESTRIÇÃO 3a):
 --  Um álbum, com faixas de músicas do período barroco, só pode ser inserido no
 --  banco de dados, caso o tipo de gravação seja DDD.
 
@@ -279,7 +262,7 @@ END;
 
 
 
--- SEGUNDA RESTRIÇÃO:
+-- SEGUNDA RESTRIÇÃO 3b):
 -- Um álbum não pode ter mais que 64 faixas (músicas)
 
 create trigger MAX_FAIXAS on faixa for insert, update
@@ -289,7 +272,7 @@ begin
 
 	select @cod_album=cod_album from inserted
 
-	select @QTDE_FAIXAS=count(*) from faixa where cod_album=@cod_album group by cod_album
+	select @QTDE_FAIXAS=count(*) from faixa where codigo_album=@cod_album group by codigo_album
 
 	if (@QTDE_FAIXAS > 64)
 	begin
@@ -300,7 +283,7 @@ end
 
 
 
--- TERCEIRA RESTRIÇÃO: (num ja foi resolvido?)
+-- TERCEIRA RESTRIÇÃO 3c): (RESOLVIDO COM ON DELETE CASCADE)
 -- No caso de remoção de um álbum do banco de dados, todas as suas faixas
 -- devem ser removidas. Lembre-se que faixas podem apresentar, por sua vez,
 -- outros relacionamentos.
@@ -308,15 +291,36 @@ end
 
 
 
--- QUARTA RESTRIÇÃO
+-- QUARTA RESTRIÇÃO 3d): (N SEI)
 -- O preço de compra de um álbum não dever ser superior a três vezes a média
 -- do preço de compra de álbuns, com todas as faixas com tipo de gravação
 -- DDD.
 
 
 
--- Defina uma função que tem como parâmetro de entrada o nome (ou parte do) 
+
+-- 4) Defina um índice primário para a tabela de Faixas sobre o atributo código do álbum. 
+-- Defina um índice secundário para a mesma tabela sobre o atributo tipo de composição. Os dois com taxas de preenchimento máxima.
+CREATE CLUSTERED INDEX idx_cod_album
+ON faixa (cod_album) FILLFACTOR=100
+
+CREATE UNCLUSTERED INDEX idx_tipo_composicao
+ON faixa (tipo_composicao) FILLFACTOR=100
+
+
+
+
+-- 5) Criar uma visão materializada que tem como atributos o nome da playlist e a quantidade de álbuns que a compõem.
+CREATE VIEW view_playlists WITH SCHEMABINDING
+AS
+	SELECT p.nome AS "Nome da Playlist", count(fp.numero_faixa) AS "Quantidade de Faixas" 
+	FROM playlist p 
+	JOIN faixa_playlist fp ON p.cod = fp.cod_playlist
+	GROUP BY p.nome
+
+
+
+
+-- 6) Defina uma função que tem como parâmetro de entrada o nome (ou parte do) 
 -- nome do compositor e o parâmetro de saída todos os álbuns com obras 
 -- compostas pelo compositor.
-
-
