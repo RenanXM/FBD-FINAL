@@ -245,7 +245,7 @@ def playlist_tracks_menu(connection, playlists):
             add_track_to_playlist(connection, playlist_code, tracks)
         elif choice == 3:
             delete_track_from_playlist(connection, playlist_code, tracks)
-        elif choice == 0;
+        elif choice == 0:
             break
 
 
@@ -303,7 +303,7 @@ def create_playlist(connection):
 # delete playlist
 
 def delete_playlist(connection, playlists):
-    
+
     selected_row = print_table_and_return_selected_row(playlists, "Selecione a Linha da Playlist: ")
     playlist_code = playlists['cod'][selected_row - 1]
     cursor = connection.cursor()
@@ -312,6 +312,48 @@ def delete_playlist(connection, playlists):
     cursor.close()
 
 
+# add track to playlist
+
+def add_track_to_playlist(connection, album_code, tracks):
+
+    selected_row = print_table_and_return_selected_row(tracks, "Selecione a Linha da Faixa: ")
+    track_number = tracks['numero'][selected_row - 1]
+    playlists = execute_query(connection, "SELECT cod, nome, dt_criacao, dt_ult_reprod, num_reprod FROM playlist")
+    os.system("cls")
+    print("\n-----------------------PLAYLISTS-------------------------")
+    print(playlists)
+    selected_row = print_table_and_return_selected_row(playlists, "Selecione a Linha da Playlist: ")
+    playlist_code = playlists['cod'][selected_row - 1]
+    cursor = connection.cursor()
+    cursor.execute(f"INSERT INTO faixa_playlist VALUES ({track_number},{album_code},{playlist_code})")
+    cursor.commit()
+    cursor.close()
+
+
+# delete track from playlist
+
+def delete_track_from_playlist(connection, playlist_code, tracks):
+    selected_row = print_table_and_return_selected_row(tracks, "Selecione a Linha da Faixa: ")
+    track_number = tracks['numero'][selected_row - 1]
+    album_code = tracks['cod_album'][selected_row - 1]
+    cursor = connection.cursor()
+    cursor.execute(f"DELETE FROM faixa_playlist WHERE numero_faixa = {track_number} "
+                   f"AND cod_album = {album_code} AND cod_playlist = {playlist_code}")
+    cursor.commit()
+    cursor.close()
+
+
+# play track
+
+def play_track(connection, playlist_code, tracks):
+    selected_row = print_table_and_return_selected_row(tracks, "Selecione a Linha da Faixa: ")
+    track_number = tracks['numero'][selected_row - 1]
+    num_reprod = tracks['num_reprod'][selected_row - 1]
+    num_reprod = int(num_reprod) + 1 
+    cursor = connection.cursor()
+    cursor.execute(f"UPDATE playlist SET dt_ult_reprod = GETDATE(), num_reprod = {num_reprod} WHERE cod = {playlist_code}")
+    connection.commit()
+    cursor.close()
 
 
 ####################################################################################
@@ -364,3 +406,15 @@ def print_table_and_return_selected_row(table, header):
 
 
 ####################################################################################
+
+
+
+
+# A ideia é separar a lógica de execução principal do código de funcionalidades que podem ser reutilizadas em outros scripts. 
+# Ao colocar o código dentro do bloco if __name__ == "__main__":, você garante que a lógica principal 
+# (como a conexão ao banco de dados e a execução do menu principal) seja executada apenas quando o script for iniciado diretamente.
+
+if __name__ == "__main__":
+    connection = connect_to_database()
+    main_menu(connection)
+    connection.close()
