@@ -1,57 +1,3 @@
--- FILEGROUP 1 arquivo
---Tabela de Playlists, Tabela de Faixas, Tabela de Associação Playlist_Faixa 
-
-
--- FILEGROUP 2 arquivos
---Tabela de Meios Físicos, Tabela de Álbuns, Tabela de Discos, 
---Tabela de Tipos de Composição, Tabela de Intérpretes, 
---Tabela de Compositores, Tabela de Períodos Musicais, Tabela de Gravadoras, 
-
--- Criação do banco de dados BDSpotPer
-CREATE DATABASE BDSpotPer
-ON
-	-- Definição do filegroup primário
-	PRIMARY
-	(
-		NAME = 'BDSpotPer',                         
-		FILENAME = 'C:\FBD-FINAL\BDSpotPer.mdf',   
-		SIZE = 5120KB,                              
-		FILEGROWTH = 1024KB                         
-	),
-	-- Definição do segundo filegroup (BDSpotPer_fg01)
-	FILEGROUP BDSpotPer_fg01
-	(
-		NAME = 'BDSpotPer_001',                     
-		FILENAME = 'C:\FBD-FINAL\BDSpotPer_001.ndf',
-		SIZE = 1024KB,                              
-		FILEGROWTH = 30%                            
-	),
-
-	(
-		NAME = 'BDSpotPer_002',                     
-		FILENAME = 'C:\FBD-FINAL\BDSpotPer_002.ndf',
-		SIZE = 1024KB,                              
-		MAXSIZE = 3072KB,                           
-		FILEGROWTH = 15%                            
-	),
-	-- Definição do terceiro filegroup (BDSpotPer_fg02)
-	FILEGROUP BDSpotPer_fg02
-	(
-		NAME = 'BDSpotPer_003',                    
-		FILENAME = 'C:\FBD-FINAL\BDSpotPer_003.ndf',
-		SIZE = 2048KB,                              
-		MAXSIZE = 5120KB,                          
-		FILEGROWTH = 30%                            
-	)
-	-- Definição do log
-	LOG ON 
-	(
-		NAME = 'BDSpotPer_log',                     
-		FILENAME = 'C:\FBD-FINAL\BDSpotPer_log.ldf',
-		SIZE = 1024KB,                              
-		FILEGROWTH = 10%                            
-	);
-
 -----------------------------------------------------------------------------------------------
 
 -- Alterando para o banco de dados BDSpotPer
@@ -95,7 +41,7 @@ CREATE TABLE Telefone(
 CREATE TABLE Composicao(
 	codigo INTEGER  NOT NULL,
 	nome VARCHAR (20) NOT NULL,
-	descricao VARCHAR (100) NOT NULL, -- Sinfonia, ópera, sonata, concerto
+	descricao VARCHAR (100) NOT NULL, -- Sinfonia, ï¿½pera, sonata, concerto
 
 	CONSTRAINT PK_COMPOSICAO PRIMARY KEY (codigo)
 
@@ -183,7 +129,7 @@ CREATE TABLE Faixa_Compositor(
 
 CREATE TABLE Periodo_Musical(
 	codigo INTEGER NOT NULL,
-	descricao VARCHAR (100) NOT NULL, --barroco, clássico, romântico, etc..
+	descricao VARCHAR (100) NOT NULL, --barroco, clï¿½ssico, romï¿½ntico, etc..
 	intervalo VARCHAR (30) NOT NULL, 
 
 	CONSTRAINT PK_PERIODO_MUSICAL PRIMARY KEY (codigo)
@@ -208,12 +154,12 @@ CREATE TABLE Compositor_Periodo_Musical(
 
 
 
--- PRIMEIRA RESTRIÇÃO 3a):
---  Um álbum, com faixas de músicas do período barroco, só pode ser inserido no
---  banco de dados, caso o tipo de gravação seja DDD.
+-- PRIMEIRA RESTRIï¿½ï¿½O 3a):
+--  Um ï¿½lbum, com faixas de mï¿½sicas do perï¿½odo barroco, sï¿½ pode ser inserido no
+--  banco de dados, caso o tipo de gravaï¿½ï¿½o seja DDD.
 
 
--- Criação de uma visão para obter códigos de álbuns e números de faixas de músicas do período barroco com tipo de gravação ADD.
+-- Criaï¿½ï¿½o de uma visï¿½o para obter cï¿½digos de ï¿½lbuns e nï¿½meros de faixas de mï¿½sicas do perï¿½odo barroco com tipo de gravaï¿½ï¿½o ADD.
 CREATE VIEW Album_Compositor_Barocco_Add AS
     SELECT DISTINCT
         a.codigo,
@@ -227,31 +173,31 @@ CREATE VIEW Album_Compositor_Barocco_Add AS
         INNER JOIN Album a ON f.codigo_album = a.codigo;
 
 
--- Gatilho para a tabela Faixa_Compositor que verifica se um álbum do período barroco está presente na visão quando há inserção ou atualização.
+-- Gatilho para a tabela Faixa_Compositor que verifica se um ï¿½lbum do perï¿½odo barroco estï¿½ presente na visï¿½o quando hï¿½ inserï¿½ï¿½o ou atualizaï¿½ï¿½o.
 CREATE TRIGGER BARROCO_COM_DDD_FC ON Faixa_Compositor FOR INSERT, UPDATE
 AS
 IF EXISTS (SELECT codigo_album FROM inserted WHERE codigo_album in (SELECT DISTINCT codigo FROM Album_Compositor_Barroco_Add))
 BEGIN
-	RAISERROR('Um álbum, com faixas de músicas do período barroco, só pode ser adquirido, caso o tipo de gravação seja DDD!', 16, 1)
+	RAISERROR('Um ï¿½lbum, com faixas de mï¿½sicas do perï¿½odo barroco, sï¿½ pode ser adquirido, caso o tipo de gravaï¿½ï¿½o seja DDD!', 16, 1)
 	ROLLBACK TRANSACTION
 END
 
--- Gatilho para a tabela Faixa que verifica se houve atualização nas colunas tipo_composicao ou tipo_grav, e se um álbum do período barroco está presente na visão.
+-- Gatilho para a tabela Faixa que verifica se houve atualizaï¿½ï¿½o nas colunas tipo_composicao ou tipo_grav, e se um ï¿½lbum do perï¿½odo barroco estï¿½ presente na visï¿½o.
 CREATE TRIGGER BARROCO_COM_DDD_F ON Faixa FOR INSERT, UPDATE
 AS
 IF UPDATE(tipo_composicao) OR UPDATE(tipo_gravacao)
 BEGIN
 	IF EXISTS (SELECT codigo_album FROM inserted WHERE codigo_album IN (SELECT DISTINCT codigo FROM Album_Compositor_Barroco_Add))
 	BEGIN
-		RAISERROR('Um álbum, com faixas de músicas do período barroco, só pode ser adquirido, caso o tipo de gravação seja DDD!', 16, 1)
+		RAISERROR('Um ï¿½lbum, com faixas de mï¿½sicas do perï¿½odo barroco, sï¿½ pode ser adquirido, caso o tipo de gravaï¿½ï¿½o seja DDD!', 16, 1)
 		ROLLBACK TRANSACTION
 	END
 END
 
 
 
--- SEGUNDA RESTRIÇÃO 3b):
--- Um álbum não pode ter mais que 64 faixas (músicas)
+-- SEGUNDA RESTRIï¿½ï¿½O 3b):
+-- Um ï¿½lbum nï¿½o pode ter mais que 64 faixas (mï¿½sicas)
 
 create trigger MAX_FAIXAS on faixa for insert, update
 as
@@ -271,24 +217,24 @@ end
 
 
 
--- TERCEIRA RESTRIÇÃO 3c): (RESOLVIDO COM ON DELETE CASCADE)
--- No caso de remoção de um álbum do banco de dados, todas as suas faixas
+-- TERCEIRA RESTRIï¿½ï¿½O 3c): (RESOLVIDO COM ON DELETE CASCADE)
+-- No caso de remoï¿½ï¿½o de um ï¿½lbum do banco de dados, todas as suas faixas
 -- devem ser removidas. Lembre-se que faixas podem apresentar, por sua vez,
 -- outros relacionamentos.
 
 
 
 
--- QUARTA RESTRIÇÃO 3d): (N SEI)
--- O preço de compra de um álbum não dever ser superior a três vezes a média
--- do preço de compra de álbuns, com todas as faixas com tipo de gravação
+-- QUARTA RESTRIï¿½ï¿½O 3d): (N SEI)
+-- O preï¿½o de compra de um ï¿½lbum nï¿½o dever ser superior a trï¿½s vezes a mï¿½dia
+-- do preï¿½o de compra de ï¿½lbuns, com todas as faixas com tipo de gravaï¿½ï¿½o
 -- DDD.
 
 
 
 
--- 4) Defina um índice primário para a tabela de Faixas sobre o atributo código do álbum. 
--- Defina um índice secundário para a mesma tabela sobre o atributo tipo de composição. Os dois com taxas de preenchimento máxima.
+-- 4) Defina um ï¿½ndice primï¿½rio para a tabela de Faixas sobre o atributo cï¿½digo do ï¿½lbum. 
+-- Defina um ï¿½ndice secundï¿½rio para a mesma tabela sobre o atributo tipo de composiï¿½ï¿½o. Os dois com taxas de preenchimento mï¿½xima.
 CREATE CLUSTERED INDEX idx_cod_album
 ON faixa (cod_album) FILLFACTOR=100
 
@@ -298,7 +244,7 @@ ON faixa (tipo_composicao) FILLFACTOR=100
 
 
 
--- 5) Criar uma visão materializada que tem como atributos o nome da playlist e a quantidade de álbuns que a compõem.
+-- 5) Criar uma visï¿½o materializada que tem como atributos o nome da playlist e a quantidade de ï¿½lbuns que a compï¿½em.
 CREATE VIEW view_playlists WITH SCHEMABINDING
 AS
 	SELECT p.nome AS "Nome da Playlist", count(fp.numero_faixa) AS "Quantidade de Faixas" 
@@ -309,8 +255,8 @@ AS
 
 
 
--- 6) Defina uma função que tem como parâmetro de entrada o nome (ou parte do) 
--- nome do compositor e o parâmetro de saída todos os álbuns com obras 
+-- 6) Defina uma funï¿½ï¿½o que tem como parï¿½metro de entrada o nome (ou parte do) 
+-- nome do compositor e o parï¿½metro de saï¿½da todos os ï¿½lbuns com obras 
 -- compostas pelo compositor.
 
 CREATE FUNCTION album_compositor (@nome VARCHAR)
@@ -330,9 +276,9 @@ END;
 
 
 ------------------------------------------------------------------------------------------------
--- VIEWS USADAS PARA O .py -> MAIORIA DA QUESTÃO 7
+-- VIEWS USADAS PARA O .py -> MAIORIA DA QUESTï¿½O 7
 
--- 7a) Listar os álbum com preço de compra maior que a média de preços de compra de todos os álbuns.
+-- 7a) Listar os ï¿½lbum com preï¿½o de compra maior que a mï¿½dia de preï¿½os de compra de todos os ï¿½lbuns.
  
 create view setea as
 select a.nome, a.pr_compra from album a where a.pr_compra >= all (select avg(pr_compra) from album)
@@ -340,7 +286,7 @@ select a.nome, a.pr_compra from album a where a.pr_compra >= all (select avg(pr_
 
 
 
--- 7b) Listar nome da gravadora com maior número de playlists que possuem pelo uma faixa composta pelo compositor Dvorack.
+-- 7b) Listar nome da gravadora com maior nï¿½mero de playlists que possuem pelo uma faixa composta pelo compositor Dvorack.
 
 -- View para obter as faixas compostas pelo compositor Dvorak
 create view faixas_de_dvorak
@@ -350,7 +296,7 @@ from compositor c
     left outer join faixa_compositor fc on c.nome = 'Dvorak' and c.codigo = fc.codigo_compositor
     inner join faixa f on f.numero_faixa = fc.numero_faixa and f.codigo_album = fc.codigo_album;
 
--- View para contar o número de playlists associadas a faixas compostas por Dvorak para cada gravadora e álbum
+-- View para contar o nï¿½mero de playlists associadas a faixas compostas por Dvorak para cada gravadora e ï¿½lbum
 create view qtd_playlist_faixas_dvorak
 as
 select a.codigo_gravadora, g.nome as nome_gravadora, a.nome as nome_album, f.codigo_album, f.numero_faixa, count(fp.codigo_playlist) as qtd_playlists
@@ -360,7 +306,7 @@ from faixas_de_dvorak f
     inner join gravadora g on a.codigo_gravadora = g.codigo
 group by a.codigo_gravadora, g.nome, a.nome, f.codigo_album, f.numero_faixa;
 
--- View final para listar o nome da gravadora com o maior número de playlists que possuem pelo menos uma faixa composta por Dvorak
+-- View final para listar o nome da gravadora com o maior nï¿½mero de playlists que possuem pelo menos uma faixa composta por Dvorak
 create view seteb as
 select qpfd.nome_gravadora, sum(qpfd.qtd_playlists) as qtd_de_faixas_em_playlists 
 from qtd_playlist_faixas_dvorak qpfd
@@ -371,7 +317,7 @@ having sum(qpfd.qtd_playlists) >= all (select sum(qpfd_inner.qtd_playlists) from
 
 
 
--- 7c) Listar nome do compositor com maior número de faixas nas playlists existentes.
+-- 7c) Listar nome do compositor com maior nï¿½mero de faixas nas playlists existentes.
 
 
 -- View para obter as faixas associadas aos compositores, incluindo a contagem de playlists para cada faixa
@@ -391,7 +337,7 @@ select nome, sum(qtd_playlists) as sum_qtd_playlists
 from compositor_e_faixas
 group by cod_compositor, nome;
 
--- View final para listar o nome do compositor com o maior número de faixas nas playlists existentes
+-- View final para listar o nome do compositor com o maior nï¿½mero de faixas nas playlists existentes
 create view setec as
 select top 1 with ties nome, sum_qtd_playlists
 from compositor_por_playlist
