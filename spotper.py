@@ -24,6 +24,7 @@ def connect_to_database():
 def execute_query(connection, query):
     return pd.read_sql(query, connection)
 
+
 ####################################################################################
 
 # Main function of the program
@@ -46,6 +47,7 @@ def main_menu(connection):
             question_7_menu(connection)    
         elif choice == 0:
             break
+
 
 ####################################################################################
 
@@ -182,51 +184,6 @@ def question_7_menu(connection):
                 
 ####################################################################################
 
-# Auxiliar
-
-
-# print_menu_options
-
-def print_menu_options(options):
-    print("\n ---------------MENU---------------")
-    for i, option in enumerate(options, start=1):
-        print(f" [{i}] {option}")
-    print("[0] Sair")
-    
-
-# select_menu_option
-
-def select_menu_option(prompt, options):
-    while True:
-        try:
-            choice = int(input(prompt))
-            if 0 <= choice <= len(options):
-                return choice
-            else:
-                print("Opção inválida. Tente novamente.")
-        except ValueError:
-            print("Entrada inválida. Digite um número.")
-
-
-# print_table_and_return_selected_row
-
-def print_table_and_return_selected_row(table, header):
-    os.system("cls")
-    print(header)
-    print(table)
-
-    while True:
-        try:
-            selected_row = int(input("\n Selecione a linha: "))
-            if 1 <= selected_row <= len(table):
-                return selected_row
-            else:
-                print("Linha inválida. Tente Novamente.")
-        except ValueError:
-            print("Entrada inválida. Digite um número.")
-
-####################################################################################
-
 # Submenus
 
 
@@ -261,7 +218,149 @@ def album_tracks_menu(connection, albums):
             break
     
 
+# playlist_tracks_menu
 
+def playlist_tracks_menu(connection, playlists):
+
+    selected_row = print_table_and_return_selected_row(playlists, "Selecione a Linha da Playlist: ")
+
+    playlist_code = playlists['cod'][selected_row - 1]
+
+    # Tracks será um DataFrame contendo as informações das faixas relacionadas ao álbum especificado
+    # pelo código album_code. O DataFrame terá colunas: numero, descr, tempo, composicao, e tipo_grav.
+    tracks = execute_query(connection, f"SELECT numero, descr, tempo, composicao, tipo_grav "
+                                       f"FROM faixas_playlists WHERE cod_playlist = {playlist_code}")
+    
+    while True:
+        os.system("cls")
+        print("\n-----------------------------FAIXAS-----------------------------")
+        print(tracks)
+
+        print_menu_options(["Tocar faixa", "Adicionar Faixa", "Apagar Faixa", "Sair"])
+        choice = select_menu_option("\n [ ] ", ["Tocar faixa", "Adicionar Faixa", "Apagar Faixa", "Sair"])
+
+        if choice == 1:
+            play_track(connection, playlist_code, tracks)
+        elif choice == 2:
+            add_track_to_playlist(connection, playlist_code, tracks)
+        elif choice == 3:
+            delete_track_from_playlist(connection, playlist_code, tracks)
+        elif choice == 0;
+            break
+
+
+####################################################################################
+
+# Actions!
+
+
+# play playlist
+
+def play_playlist(connection, playlists):
+
+    selected_row = print_table_and_return_selected_row(playlists, "Selecione a Linha da Playlist: ")
+    playlist_code = playlists['cod'][selected_row - 1 ]
+    num_reprod = playlists['num_reprod'][selected_row - 1]
+    num_reprod = int(num_reprod) + 1
+    # O cursor é uma espécie de ponteiro que permite executar comandos SQL no banco de dados e recuperar resultados. 
+    # O cursor é criado a partir da conexão com o banco de dados (connection).
+    cursor = connection.cursor()
+    cursor.execute(f"UPDATE playlist SET dt_ult_reprod = GETDATE(), num_reprod = {num_reprod} WHERE cod = {playlist_code}")
+    connection.commit()
+    cursor.close()
+
+
+# edit playlist 
+
+def edit_playlist(connection, playlists):
+
+    selected_row = print_table_and_return_selected_row(playlists, "Selecione a Linha da Playlist: ")
+    playlist_code = playlists['cod'][selected_row -  1]
+    name = input("\n Nome: ")
+    # O cursor é uma espécie de ponteiro que permite executar comandos SQL no banco de dados e recuperar resultados. 
+    # O cursor é criado a partir da conexão com o banco de dados (connection).
+    cursor = connection.cursor()
+    cursor.execute(f"UPDATE playlist SET nome = '{name}' WHERE cod = {playlist_code}")
+    connection.commit()
+    cursor.close()
+
+
+# create playlist
+
+def create_playlist(connection):
+
+    try:
+        code = input("\n Qual o codigo da playlist?: ")
+        name = input("\n Qual o nome dela?" )
+        cursor = connection.cursor()
+        cursor.execute(f"INSERT INTO playlist VALUES ({code}, '{name}', GETDATE(), GETDATE(), 0, '00:00:00')")
+        connection.commit()
+        cursor.close()
+    except: 
+        input("\n Operação Inválida, pressione enter para continuar")
+
+
+# delete playlist
+
+def delete_playlist(connection, playlists):
+    
+    selected_row = print_table_and_return_selected_row(playlists, "Selecione a Linha da Playlist: ")
+    playlist_code = playlists['cod'][selected_row - 1]
+    cursor = connection.cursor()
+    cursor.execute(f"DELETE FROM playlist WHERE cod = {playlist_code}")
+    connection.commit()
+    cursor.close()
+
+
+
+
+####################################################################################
+
+# Auxiliar
+
+
+# print_menu_options
+
+def print_menu_options(options):
+
+    print("\n ---------------MENU---------------")
+    for i, option in enumerate(options, start=1):
+        print(f" [{i}] {option}")
+    print("[0] Sair")
+    
+
+# select_menu_option
+
+def select_menu_option(prompt, options):
+
+    while True:
+        try:
+            choice = int(input(prompt))
+            if 0 <= choice <= len(options):
+                return choice
+            else:
+                print("Opção inválida. Tente novamente.")
+        except ValueError:
+            print("Entrada inválida. Digite um número.")
+
+
+# print_table_and_return_selected_row
+
+def print_table_and_return_selected_row(table, header):
+
+    os.system("cls")
+    print(header)
+    print(table)
+
+    while True:
+        try:
+            selected_row = int(input("\n Selecione a linha: "))
+            if 1 <= selected_row <= len(table):
+                return selected_row
+            else:
+                print("Linha inválida. Tente Novamente.")
+        except ValueError:
+            print("Entrada inválida. Digite um número.")
 
 
 ####################################################################################
