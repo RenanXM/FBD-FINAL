@@ -199,6 +199,7 @@ CREATE TABLE Compositor_Periodo_Musical(
 
 ) ON BDSpotPer_fg01;
 
+
 -------------------------------------------------------------------------------------------------------------------------
 
 
@@ -339,3 +340,77 @@ BEGIN
 
     RETURN
 END;
+
+
+------------------------------------------------------------------------------------------------
+-- VIEWS USADAS PARA O .py -> MAIORIA DA QUESTÃO 7
+
+-- 7a) Listar os álbum com preço de compra maior que a média de preços de compra de todos os álbuns.
+ 
+create view setea as
+select a.nome, a.pr_compra from album a where a.pr_compra >= all (select avg(pr_compra) from album)
+
+
+
+
+-- 7b) Listar nome da gravadora com maior número de playlists que possuem pelo uma faixa composta pelo compositor Dvorack.
+
+-- View para obter as faixas compostas pelo compositor Dvorak
+create view faixas_de_dvorak
+as
+select f.numero_faixa, f.codigo_album
+from compositor c
+    left outer join faixa_compositor fc on c.nome = 'Dvorak' and c.codigo = fc.codigo_compositor
+    inner join faixa f on f.numero_faixa = fc.numero_faixa and f.codigo_album = fc.codigo_album;
+
+-- View para contar o número de playlists associadas a faixas compostas por Dvorak para cada gravadora e álbum
+create view qtd_playlist_faixas_dvorak
+as
+select a.codigo_gravadora, g.nome as nome_gravadora, a.nome as nome_album, f.codigo_album, f.numero_faixa, count(fp.codigo_playlist) as qtd_playlists
+from faixas_de_dvorak f
+    left outer join faixa_playlist fp on f.numero_faixa = fp.numero_faixa and f.codigo_album = fp.codigo_album
+    inner join album a on f.codigo_album = a.codigo
+    inner join gravadora g on a.codigo_gravadora = g.codigo
+group by a.codigo_gravadora, g.nome, a.nome, f.codigo_album, f.numero_faixa;
+
+-- View final para listar o nome da gravadora com o maior número de playlists que possuem pelo menos uma faixa composta por Dvorak
+create view seteb as
+select qpfd.nome_gravadora, sum(qpfd.qtd_playlists) as qtd_de_faixas_em_playlists 
+from qtd_playlist_faixas_dvorak qpfd
+group by qpfd.codigo_gravadora, qpfd.nome_gravadora
+having sum(qpfd.qtd_playlists) >= all (select sum(qpfd_inner.qtd_playlists) from qtd_playlist_faixas_dvorak qpfd_inner group by qpfd_inner.codigo_gravadora);
+
+
+
+
+
+-- 7c) Listar nome do compositor com maior número de faixas nas playlists existentes.
+
+
+-- View para obter as faixas associadas aos compositores, incluindo a contagem de playlists para cada faixa
+create view compositor_e_faixas
+as
+select c.codigo as cod_compositor, c.nome, f.codigo_album, f.numero_faixa, count(fp.codigo_playlist) as qtd_playlists
+from compositor c
+    left outer join faixa_compositor fc on c.codigo = fc.codigo_compositor
+    inner join faixa f on f.numero_faixa = fc.numero_faixa and f.codigo_album = fc.codigo_album
+    left outer join faixa_playlist fp on f.numero_faixa = fp.numero_faixa and f.codigo_album = fp.codigo_album
+group by c.codigo, c.nome, f.codigo_album, f.numero_faixa;
+
+-- View para calcular a soma de playlists para cada compositor
+create view compositor_por_playlist
+as
+select nome, sum(qtd_playlists) as sum_qtd_playlists
+from compositor_e_faixas
+group by cod_compositor, nome;
+
+-- View final para listar o nome do compositor com o maior número de faixas nas playlists existentes
+create view setec as
+select top 1 with ties nome, sum_qtd_playlists
+from compositor_por_playlist
+order by sum_qtd_playlists desc;
+
+
+
+
+
