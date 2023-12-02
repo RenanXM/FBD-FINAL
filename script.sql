@@ -324,3 +324,18 @@ AS
 -- 6) Defina uma função que tem como parâmetro de entrada o nome (ou parte do) 
 -- nome do compositor e o parâmetro de saída todos os álbuns com obras 
 -- compostas pelo compositor.
+
+CREATE FUNCTION album_compositor (@nome VARCHAR)
+RETURNS @tabela_obras TABLE (albuns_compositor NVARCHAR(30))
+AS
+BEGIN
+    INSERT INTO @tabela_obras
+    SELECT DISTINCT a.nome
+    FROM Compositor c
+    INNER JOIN Faixa_Compositor fc ON c.codigo = fc.fk_codigo_compositor
+    INNER JOIN Faixa f ON fc.fk_codigo_faixa = f.codigo_faixa
+    INNER JOIN Album a ON f.codigo_album = a.codigo
+    WHERE c.nome LIKE ('%' + @nome + '%')
+
+    RETURN
+END;
