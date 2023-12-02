@@ -1,28 +1,67 @@
 USE BDSpotPer;
 
+CREATE TABLE Album(
+	codigo INTEGER NOT NULL,
+    descricao VARCHAR (100) NOT NULL, 
+	fk_codigo_gravadora INTEGER  NOT NULL,
+	nome VARCHAR (50) NOT NULL,
+	data_compra DATE NOT NULL,
+	data_gravacao DATE NOT NULL,
+    tipo_compra VARCHAR (20) NOT NULL,
+    fk_codigo_meio_fisico INTEGER NOT NULL,
+    preco_compra DEC(5,2) NOT NULL,
+
+	CONSTRAINT PK_ALBUM PRIMARY KEY (codigo),
+    CONSTRAINT FK_MEIO_FISICO FOREIGN KEY(fk_codigo_meio_fisico) REFERENCES Meio_Fisico,
+    CONSTRAINT DATA_GRAVACAO CHECK (data_gravacao > '2000-01-01'),
+	CONSTRAINT FK_GRAVADORA_A FOREIGN KEY (fk_codigo_gravadora) REFERENCES Gravadora,
+	CONSTRAINT TIPO_COMPRA CHECK (tipo_compra LIKE '__sica' OR tipo_compra LIKE '_ownload')
+
+) ON BDSpotPer_fg01;
+
+CREATE TABLE Meio_Fisico(
+    codigo INTEGER NOT NULL,
+    nome VARCHAR(50) NOT NULL,
+    tipo VARCHAR(50) NOT NULL,
+    descricao VARCHAR(100) NOT NULL,
+
+    CONSTRAINT PK_MEIO_FISICO PRIMARY KEY(codigo)
+
+) ON BDSpotPer_fg01;
+
+CREATE TABLE Faixa(
+	codigo_faixa INTEGER  NOT NULL,
+	numero INTEGER  NOT NULL,
+	fk_codigo_album INTEGER  NOT NULL,
+	descricao VARCHAR (100) NOT NULL, 
+	tempo time(0) NOT NULL,
+	tipo_composicao INTEGER  NOT NULL,
+	tipo_gravacao VARCHAR (3) NOT NULL
+
+	CONSTRAINT PK_FAIXA PRIMARY KEY (codigo_faixa)
+	CONSTRAINT FK_ALBUM_F FOREIGN KEY (fk_codigo_album) REFERENCES Album ON DELETE CASCADE
+	CONSTRAINT ADD_OU_DDD CHECK (tipo_gravacao LIKE 'ADD' OR tipo_gravacao LIKE 'DDD')
+	
+) ON BDSpotPer_fg02;
+
+CREATE TABLE Meio_Fisico_Faixa(
+    codigo INTEGER NOT NULL,
+    numero_faixa INTEGER NOT NULL,
+    fk_codigo_meio_fisico INTEGER NOT NULL,
+    fk_codigo_faixa INTEGER NOT NULL,
+
+    CONSTRAINT PK_MEIO_FISICO_FAIXA PRIMARY KEY(codigo),
+    CONSTRAINT FK_MEIO_FISICO_MFA FOREIGN KEY (fk_codigo_meio_fisico) REFERENCES Meio_Fisico,
+    CONSTRAINT FK_FAIXA_MFA FOREIGN KEY (fk_codigo_faixa) REFERENCES Faixa
+
+)ON BDSpotPer_fg01;
+
 CREATE TABLE Gravadora(
 	codigo INTEGER  NOT NULL,
 	endereco VARCHAR (100) NOT NULL,
 	pagina VARCHAR (100) NOT NULL,
 	nome VARCHAR (20) NOT NULL,
 	CONSTRAINT PK_GRAVADORA PRIMARY KEY (codigo)
-
-) ON BDSpotPer_fg01;
-
-CREATE TABLE Album(
-	codigo INTEGER  NOT NULL,
-	fk_codigo_gravadora INTEGER  NOT NULL,
-	nome VARCHAR (50) NOT NULL,
-	descricao VARCHAR (100) NOT NULL, 
-	tipo_compra VARCHAR (20) NOT NULL,
-	pr_compra DEC(5,2) NOT NULL,
-	dt_compra DATE NOT NULL,
-	dt_gravacao DATE NOT NULL,
-	
-	CONSTRAINT PK_ALBUM PRIMARY KEY (codigo),
-	CONSTRAINT FK_GRAVADORA_A FOREIGN KEY (fk_codigo_gravadora) REFERENCES Gravadora,
-	CONSTRAINT TIPO_COMPRA CHECK (tipo_compra LIKE '__sica' OR tipo_compra LIKE '_ownload'),
-	CONSTRAINT DATA_COMPRA CHECK (dt_compra > '01/01/2000')
 
 ) ON BDSpotPer_fg01;
 
@@ -42,21 +81,6 @@ CREATE TABLE Composicao(
 	CONSTRAINT PK_COMPOSICAO PRIMARY KEY (codigo)
 
 ) ON BDSpotPer_fg01;
-
-CREATE TABLE Faixa(
-	codigo_faixa INTEGER  NOT NULL,
-	numero INTEGER  NOT NULL,
-	fk_codigo_album INTEGER  NOT NULL,
-	descricao VARCHAR (100) NOT NULL, 
-	tempo time(0) NOT NULL,
-	tipo_composicao INTEGER  NOT NULL,
-	tipo_gravacao VARCHAR (3) NOT NULL
-
-	CONSTRAINT PK_FAIXA PRIMARY KEY (codigo_faixa)
-	CONSTRAINT FK_ALBUM_F FOREIGN KEY (fk_codigo_album) REFERENCES Album ON DELETE CASCADE
-	CONSTRAINT ADD_OU_DDD CHECK (tipo_gravacao LIKE 'ADD' OR tipo_gravacao LIKE 'DDD')
-	
-) ON BDSpotPer_fg02;
 
 CREATE TABLE Playlist(
 	codigo INTEGER  NOT NULL,
