@@ -209,6 +209,8 @@ AS
 	GROUP BY p.nome
 
 
+
+
 -- Defina um índice primário para a tabela de Faixas sobre o atributo código do álbum. 
 -- Defina um índice secundário para a mesma tabela sobre o atributo tipo de composição. Os dois com taxas de preenchimento máxima.
 CREATE CLUSTERED INDEX idx_cod_album
@@ -218,9 +220,64 @@ CREATE UNCLUSTERED INDEX idx_tipo_composicao
 ON faixa (tipo_composicao) FILLFACTOR=100
 
 
+
+
+
+
 -- PRIMEIRA RESTRIÇÃO:
 --  Um álbum, com faixas de músicas do período barroco, só pode ser inserido no
 --  banco de dados, caso o tipo de gravação seja DDD.
+
+
+-- Criação de uma visão para obter códigos de álbuns e números de faixas de músicas do período barroco com tipo de gravação ADD.
+CREATE VIEW Album_Compositor_Barocco_Add AS
+    SELECT DISTINCT
+        a.codigo,
+        f.numero
+    FROM
+        Periodo_Musical pm
+        INNER JOIN Compositor_Periodo_Musical cpm ON pm.codigo = cpm.codigo_periodo AND pm.descricao LIKE 'Barroco'
+        INNER JOIN Compositor c ON cpm.codigo_compositor = c.codigo
+        INNER JOIN Faixa_Compositor fc ON c.codigo = fc.fk_codigo_compositor
+        INNER JOIN Faixa f ON fc.codigo_album = f.codigo_album AND fc.numero_faixa = f.numero AND f.tipo_gravacao LIKE 'ADD'
+        INNER JOIN Album a ON f.codigo_album = a.codigo;
+
+
+-- Gatilho para a tabela Faixa_Compositor que verifica se um álbum do período barroco está presente na visão quando há inserção ou atualização.
+CREATE TRIGGER BARROCO_COM_DDD_FC ON Faixa_Compositor FOR INSERT, UPDATE
+AS
+BEGIN
+    IF EXISTS (
+            SELECT fc.codigo_album
+            FROM inserted i
+            INNER JOIN Album_Compositor_Barocco_Add ac ON i.codigo_album = ac.codigo_album
+        )
+    BEGIN
+        RAISEERROR('Um álbum, com faixas de músicas do período barroco, só pode ser adquirido, caso o tipo de gravação seja DDD!', 16, 1);
+        ROLLBACK TRANSACTION;
+    END
+END;
+
+
+-- Gatilho para a tabela Faixa que verifica se houve atualização nas colunas tipo_composicao ou tipo_grav, e se um álbum do período barroco está presente na visão.
+CREATE TRIGGER BARROCO_COM_DDD_F ON Faixa FOR INSERT, UPDATE
+AS
+BEGIN
+    IF UPDATE(tipo_composicao) OR UPDATE(tipo_grav)
+    BEGIN
+        IF EXISTS (
+                SELECT f.codigo_album
+                FROM inserted i
+                INNER JOIN Album_Compositor_Barocco_Add ac ON i.codigo_album = ac.codigo_album
+            )
+        BEGIN
+            RAISEERROR('Um álbum, com faixas de músicas do período barroco, só pode ser adquirido, caso o tipo de gravação seja DDD!', 16, 1);
+            ROLLBACK TRANSACTION;
+        END
+    END
+END;
+
+
 
 
 
