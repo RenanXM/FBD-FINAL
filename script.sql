@@ -279,12 +279,24 @@ END;
 
 
 
-
-
-
 -- SEGUNDA RESTRIÇÃO:
 -- Um álbum não pode ter mais que 64 faixas (músicas)
 
+create trigger MAX_FAIXAS on faixa for insert, update
+as
+begin
+	declare @cod_album smallint, @QTDE_FAIXAS int
+
+	select @cod_album=cod_album from inserted
+
+	select @QTDE_FAIXAS=count(*) from faixa where cod_album=@cod_album group by cod_album
+
+	if (@QTDE_FAIXAS > 64)
+	begin
+		raiserror('Numero maximo de faixas execedido!', 16,1)
+		rollback transaction
+	end
+end
 
 
 
