@@ -66,7 +66,6 @@ def main_menu(connection):
 
 def albums_menu(connection):
     while True:
-        os.system("cls")
         albums = execute_query(connection, "SELECT * FROM album")
         print("\n---------------------------------------------ALBUNS---------------------------------------------")
         print(albums)
@@ -85,7 +84,6 @@ def albums_menu(connection):
 
 def playlists_menu(connection):
     while True:
-        os.system("cls")
         playlists = execute_query(connection, "SELECT cod, nome, dt_criacao, dt_ult_reprod, num_reprod FROM playlist")
         print("\n-----------------------PLAYLISTS-------------------------")
         print(playlists)
@@ -124,7 +122,6 @@ def playlists_menu(connection):
 
 def question_7_menu(connection):
     while True:
-        os.system("cls")
 
 
         print_menu_options(["Item A", "Item B", "Item C", "Item D", "Sair"])
@@ -211,7 +208,6 @@ def album_tracks_menu(connection, albums):
     
 
     while True:
-        os.system("cls")
         print("\n-----------------------------FAIXAS-----------------------------")    
         print(tracks)
         print_menu_options(["Adicionar Faixa a Playlist", "Sair"])
@@ -241,7 +237,6 @@ def playlist_tracks_menu(connection, playlists):
                                        f"FROM faixas_playlists WHERE cod_playlist = {playlist_code}")
     
     while True:
-        os.system("cls")
         print("\n-----------------------------FAIXAS-----------------------------")
         print(tracks)
 
@@ -399,7 +394,6 @@ def select_menu_option(prompt, options):
 
 def print_table_and_return_selected_row(table, header):
 
-    os.system("cls")
     print(header)
     print(table)
 
