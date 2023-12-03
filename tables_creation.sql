@@ -17,6 +17,7 @@ CREATE TABLE album(
 	pr_compra DEC(5,2) NOT NULL,
 	dt_compra DATE NOT NULL,
 	dt_gravacao DATE NOT NULL,
+	tipo_compra VARCHAR(20) NOT NULL,
 	nome VARCHAR(50) NOT NULL,	
 	
 	CONSTRAINT PK_ALBM PRIMARY KEY (cod),
