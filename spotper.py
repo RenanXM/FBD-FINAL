@@ -1,5 +1,7 @@
 import pyodbc as SQL
 import pandas as pd
+import os
+
 
 # Bureaucracy:
 
@@ -38,7 +40,7 @@ def main_menu(connection):
     while True:
 
         # print_menu_options -> Just print the options of one menu.
-        print_menu_options(["Albuns", "Playlists", "Questão 7"])
+        print_menu_options(["Albuns", "Playlists", "Questão 7", "Buscar Albuns por Compositor(função)"])
 
         # select_menu_option -> Function to select an option on the menu
         choice = select_menu_option("\n [ ] ", ["Albuns", "Playlists", "Questão 7"])
@@ -48,7 +50,9 @@ def main_menu(connection):
         if choice == 2:
             playlists_menu(connection)
         if choice == 3:
-            question_7_menu(connection)    
+            question_7_menu(connection)
+        if choice == 4:
+            search_albums_by_composer(connection)
         elif choice == 0:
             break
 
@@ -178,7 +182,20 @@ def question_7_menu(connection):
             except:
                 input("\n Operação Inválida, pressione enter para continuar")
 
-                
+
+
+# search_albums_by_composer (UTILIZANDO A FUNÇÃO)
+def search_albums_by_composer(connection):
+    
+    composer_name = input("\n Digite o nome (ou parte do nome) do compositor: ")
+    albums = execute_query(connection, f"SELECT * FROM album_compositor('{composer_name}')")
+    print("\n-----------------------------ÁLBUNS DO COMPOSITOR-----------------------------")
+    print(albums)
+    input("\n Pressione enter para voltar")
+
+
+
+            
 ####################################################################################
 
 # Submenus

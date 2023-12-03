@@ -1,5 +1,25 @@
 USE BDSpotPer;
 
+-- Para cada gravadora, estão associados um código, nome, endereço, telefones        OK
+-- e endereço da home page.                                                          OK
+ 
+CREATE TABLE gravadora(
+	cod SMALLINT NOT NULL,
+	endereco VARCHAR(100) NOT NULL,
+	pagina VARCHAR(100) NOT NULL,
+	nome VARCHAR(20) NOT NULL,
+	CONSTRAINT PK_GRAV PRIMARY KEY(cod)
+
+) ON BDSpotPer_fg01;
+
+CREATE TABLE telefone(
+	numero VARCHAR(15) NOT NULL,
+	cod_grav SMALLINT NOT NULL,
+	CONSTRAINT PK_TEL PRIMARY KEY (numero),
+	CONSTRAINT FK_GRAV_TEL FOREIGN KEY (cod_grav) REFERENCES gravadora
+
+) ON BDSpotPer_fg01;
+
 -- Cada álbum, uma coleção de músicas agrupadas em um meio físico de 
 -- armazenamento, possui:
 -- a. um código identificador uma descrição, gravadora, preço de compra, data OK
@@ -39,6 +59,20 @@ CREATE TABLE meio_fisico (
 	CONSTRAINT FK_COD_ALBUM_MF FOREIGN KEY (cod_album) REFERENCES album
 )
 
+-- Para cada tipo de composição, devem estar associados um código                        OK
+-- identificador e a descrição. O tipo deve caracterizar se a obra gravada é uma         OK
+-- sinfonia, ópera, sonata, concerto e assim por diante. É obrigatório identificar o     OK
+-- tipo de composição para cada faixa existente. Uma faixa só pode apresentar            OK CONSTRAINT EM FAIXA
+-- um tipo de composição.
+
+CREATE TABLE composicao(
+	cod SMALLINT NOT NULL,
+	descr VARCHAR(100) NOT NULL,
+	tipo_comp VARCHAR(50) NOT NULL,
+	CONSTRAINT PK_COMPOSICAO PRIMARY KEY (cod)
+
+) ON BDSpotPer_fg01;
+
 -- Cada faixa de um álbum possui obrigatoriamente como propriedades 
 -- a. o número da faixa (posição da faixa no álbum), uma descrição, tipo de       OK
 -- composição, intérprete(s), compositor(es), tempo de execução e tipo de         OK
@@ -55,6 +89,7 @@ CREATE TABLE faixa(
 	tempo_execucao TIME(0) NOT NULL,
 	cod_album SMALLINT NOT NULL,
 	cod_tipo_composicao SMALLINT NOT NULL,
+	tipo_gravacao VARCHAR(50) NOT NULL,
 	
 	CONSTRAINT PK_COD_FAIXA PRIMARY KEY (cod),
 	CONSTRAINT FK_ALBUM_FAIXA FOREIGN KEY (cod_album) REFERENCES album ON DELETE CASCADE,
@@ -75,12 +110,12 @@ CREATE TABLE meio_fisico_faixa (
 	CONSTRAINT PK_MEIO_FISICO_FAIXA PRIMARY KEY (cod),
 	CONSTRAINT FK_COD_MEIO_FISICO_MFA FOREIGN KEY (cod_meio_fisico) REFERENCES meio_fisico,
 	CONSTRAINT FK_COD_FAIXA_MFA FOREIGN KEY (cod_faixa) REFERENCES faixa,
-	CONSTRAINT ADD_OU_DDD CHECK (tipo_grav LIKE 'ADD' or tipo_grav LIKE 'DDD')
+	CONSTRAINT ADD_OU_DDD CHECK (tipo_gravacao LIKE 'ADD' or tipo_gravacao LIKE 'DDD')
 )
 
 
 -- COMPOSITORES E INTERPRETES
-
+ 
 -- PRECISA DE PERIODO MUSICAL
 
 -- Cada período musical possuirá um código, uma descrição e intervalo de tempo em que esteve ativo       OK
@@ -111,7 +146,7 @@ CREATE TABLE compositor(
 	cod_periodo_musc SMALLINT NOT NULL,
 
 	CONSTRAINT PK_COMPOSITOR PRIMARY KEY (cod),
-	CONSTRAINT FK_PERIODO_MUSC FOREIGN KEY (cod_periodo_musc) REFERENCES (periodo_musc)
+	CONSTRAINT FK_PERIODO_MUSC FOREIGN KEY (cod_periodo_musc) REFERENCES periodo_musc
 
 ) ON BDSpotPer_fg01;
 
@@ -134,7 +169,7 @@ CREATE TABLE faixa_interprete(
 	cod_interp SMALLINT NOT NULL,
 
 	CONSTRAINT PK_FAIXA_INTERPRETE PRIMARY KEY (cod),
-	CONSTRAINT FK_FAIXA_FI FOREIGN KEY (cod_faixa) REFERENCES faixa
+	CONSTRAINT FK_FAIXA_FI FOREIGN KEY (cod_faixa) REFERENCES faixa,
 	CONSTRAINT FK_INTERP_FI FOREIGN KEY (cod_interp) REFERENCES interprete
 
 ) ON BDSpotPer_fg01;
@@ -152,39 +187,7 @@ CREATE TABLE faixa_compositor(
 
 ) ON BDSpotPer_fg01;
 
--- Para cada tipo de composição, devem estar associados um código                        OK
--- identificador e a descrição. O tipo deve caracterizar se a obra gravada é uma         OK
--- sinfonia, ópera, sonata, concerto e assim por diante. É obrigatório identificar o     OK
--- tipo de composição para cada faixa existente. Uma faixa só pode apresentar            OK CONSTRAINT EM FAIXA
--- um tipo de composição.
 
-CREATE TABLE composicao(
-	cod SMALLINT NOT NULL,
-	descr VARCHAR(100) NOT NULL,
-	tipo_comp VARCHAR(50) NOT NULL,
-	CONSTRAINT PK_COMPOSICAO PRIMARY KEY (cod)
-
-) ON BDSpotPer_fg01;
-
--- Para cada gravadora, estão associados um código, nome, endereço, telefones        OK
--- e endereço da home page.                                                          OK
- 
-CREATE TABLE gravadora(
-	cod SMALLINT NOT NULL,
-	endereco VARCHAR(100) NOT NULL,
-	pagina VARCHAR(100) NOT NULL,
-	nome VARCHAR(20) NOT NULL,
-	CONSTRAINT PK_GRAV PRIMARY KEY(cod)
-
-) ON BDSpotPer_fg01;
-
-CREATE TABLE telefone(
-	numero VARCHAR(15) NOT NULL,
-	cod_grav SMALLINT NOT NULL,
-	CONSTRAINT PK_TEL PRIMARY KEY (numero),
-	CONSTRAINT FK_GRAV_TEL FOREIGN KEY (cod_grav) REFERENCES gravadora
-
-) ON BDSpotPer_fg01;
 
 -- O usuário do SpotPer pode definir Playlists. Uma playlist pode ser composta 
 -- por uma ou mais faixas, que, por sua vez, podem pertencer a álbuns distintos. 

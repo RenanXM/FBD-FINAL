@@ -1,10 +1,14 @@
+-- VIEW PARA RESTRIÇÃO
+-- a) Um álbum, com faixas de músicas do período barroco, só pode ser inserido no 
+-- banco de dados, caso o tipo de gravação seja DDD.
+
 CREATE VIEW album_com_faixa_barroca_ADD
 AS
 SELECT DISTINCT a.cod, f.numero
-	FROM periodo_musc pm INNER JOIN compositor_periodo_music cpm ON pm.cod=cpm.cod_periodo AND descr LIKE 'Barroco'
-			INNER JOIN compositor c ON cpm.cod_composit=c.cod
-			INNER JOIN faixa_compositor fc ON c.cod=fc.cod_composit
-			INNER JOIN faixa f ON fc.cod_album=f.cod_album AND fc.numero_faixa=f.numero AND f.tipo_grav LIKE 'ADD'
+	FROM periodo_musc pm --INNER JOIN compositor_periodo_music cpm ON pm.cod=cpm.cod_periodo AND descr LIKE 'Barroco'
+			INNER JOIN compositor c ON pm.cod=c.cod_periodo_musc
+			INNER JOIN faixa_compositor fc ON c.cod=fc.cod_comp
+			INNER JOIN faixa f ON fc.cod_faixa=f.cod AND f.tipo_grav LIKE 'ADD'
 			INNER JOIN album a ON f.cod_album=a.cod
 	GROUP BY a.cod, f.numero
 
