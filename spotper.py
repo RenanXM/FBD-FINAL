@@ -8,15 +8,22 @@ import os
 
 # Function to connect to the database
 
+# Crie variáveis para suas credenciais de conexão.
+SERVER = 'DESKTOP-R31K86D'
+DATABASE = 'BDSpotPer'
+USERNAME = 'DESKTOP-R31K86D\Havillon'
+PASSWORD = ''
+
+# Crie uma variável de cadeia de conexão usando interpolação de cadeia de caracteres.
+conn_str = (
+    r'DRIVER={ODBC Driver 11 for SQL Server};'
+    r'SERVER=DESKTOP-R31K86D;'
+    r'DATABASE=BDSpotPer;'
+    r'Trusted_Connection=yes;'
+)
+
 def connect_to_database():
-    # AVION ADAPTAR...
-    # Faz o L
-    return SQL.connect(
-        "Driver={SQL Server Native Client 11.0};"
-        "Server = ;"
-        "Database=BDSpotPer_FINAL;"
-        "Trusted_Connection=yes;"
-    )
+    return SQL.connect(conn_str)
 
 
 # Function to execute SQL queries and return the result as a Pandas DataFrame
@@ -59,7 +66,7 @@ def main_menu(connection):
 
 def albums_menu(connection):
     while True:
-        os.sytem("cls")
+        os.system("cls")
         albums = execute_query(connection, "SELECT * FROM album")
         print("\n---------------------------------------------ALBUNS---------------------------------------------")
         print(albums)
