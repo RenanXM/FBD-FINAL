@@ -38,7 +38,6 @@ def execute_query(connection, query):
 
 def main_menu(connection):
     while True:
-        os.system("cls")
 
         # print_menu_options -> Just print the options of one menu.
         print_menu_options(["Albuns", "Playlists", "Questão 7"])
@@ -131,7 +130,6 @@ def question_7_menu(connection):
         
         if choice == 1:
             try:
-                os.system("cls")
                 print("------------ITEM A------------")
                 # setea = view
                 table = execute_query(connection, "SELECT * FROM setea ORDER BY 2 DESC")
@@ -144,7 +142,6 @@ def question_7_menu(connection):
         
         elif choice == 2:
             try:
-                os.system("cls")
                 print("------------ITEM B------------")
 
                 #s eteb = view
@@ -158,7 +155,6 @@ def question_7_menu(connection):
 
         elif choice == 3:
             try:
-                os.system("cls")
                 print("------------ITEM C------------")
 
                 # setec = view
@@ -173,7 +169,6 @@ def question_7_menu(connection):
 
         elif choice == 4:
             try:
-                os.sytem("cls")
                 print("------------ITEM D------------")
 
                 # seted = view
@@ -323,7 +318,6 @@ def add_track_to_playlist(connection, album_code, tracks):
     selected_row = print_table_and_return_selected_row(tracks, "Selecione a Linha da Faixa: ")
     track_number = tracks['numero'][selected_row - 1]
     playlists = execute_query(connection, "SELECT cod, nome, dt_criacao, dt_ult_reprod, num_reprod FROM playlist")
-    os.system("cls")
     print("\n-----------------------PLAYLISTS-------------------------")
     print(playlists)
     selected_row = print_table_and_return_selected_row(playlists, "Selecione a Linha da Playlist: ")
