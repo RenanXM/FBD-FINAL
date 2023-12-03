@@ -1,7 +1,5 @@
 import pyodbc as SQL
 import pandas as pd
-import os
-
 
 # Bureaucracy:
 

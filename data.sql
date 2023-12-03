@@ -61,6 +61,7 @@ INSERT INTO compositor (cod, nome, local_nasc, dt_nasc, dt_morte) VALUES (2, 'Co
 INSERT INTO compositor (cod, nome, local_nasc, dt_nasc, dt_morte) VALUES (3, 'Compositor 3', 'Local de Nascimento 3', '2000-01-03', NULL);
 INSERT INTO compositor (cod, nome, local_nasc, dt_nasc, dt_morte) VALUES (4, 'Compositor 4', 'Local de Nascimento 4', '2000-01-04', NULL);
 INSERT INTO compositor (cod, nome, local_nasc, dt_nasc, dt_morte) VALUES (5, 'Compositor 5', 'Local de Nascimento 5', '2000-01-05', '2023-12-02');
+INSERT INTO compositor (cod, nome, local_nasc, dt_nasc, dt_morte) VALUES (6, 'Dvorak', 'Local de Nascimento 6', '2000-01-30', NULL);
 
 INSERT INTO faixa_compositor (numero_faixa, cod_album, cod_composit) VALUES (1, 1, 1);
 INSERT INTO faixa_compositor (numero_faixa, cod_album, cod_composit) VALUES (2, 1, 2);

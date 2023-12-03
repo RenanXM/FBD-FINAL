@@ -1,28 +1,36 @@
 USE BDSpotPer;
 
+
+-- Cada álbum, uma coleção de músicas agrupadas em um meio físico de 
+-- armazenamento, possui:
+-- a. um código identificador uma descrição, gravadora, preço de compra, data OK
+-- de compra, data de gravação e o tipo de compra.                            OK
+-- b. A data de gravação deve ser obrigatoriamente posterior a 01.01.2000.    OK
+-- c. O meio físico do álbum, que pode ser CD, vinil ou download.             NOVA TABELA
+-- i. Quando o meio físico for CD ou vinil, o álbum pode ser composto por     ''
+-- um ou mais CDs ou vinis.                                                   ''
+-- d. O preço de compra                                                       OK
+CREATE TABLE album(
+	cod SMALLINT NOT NULL,
+	descr VARCHAR(100) NOT NULL, 
+	cod_grav SMALLINT NOT NULL,
+	pr_compra DEC(5,2) NOT NULL,
+	dt_compra DATE NOT NULL,
+	dt_gravacao DATE NOT NULL,
+	nome VARCHAR(50) NOT NULL,	
+	
+	CONSTRAINT PK_ALBM PRIMARY KEY (cod),
+	CONSTRAINT FK_GRAV_ALBM FOREIGN KEY (cod_grav) REFERENCES gravadora,
+	CONSTRAINT CHK_dt_gravacao CHECK (dt_gravacao > '2000-01-01')
+
+) ON BDSpotPer_fg01;
+
 CREATE TABLE gravadora(
 	cod SMALLINT NOT NULL,
 	endereco VARCHAR(100) NOT NULL,
 	pagina VARCHAR(100) NOT NULL,
 	nome VARCHAR(20) NOT NULL,
 	CONSTRAINT PK_GRAV PRIMARY KEY(cod)
-
-) ON BDSpotPer_fg01;
-
-CREATE TABLE album(
-	cod SMALLINT NOT NULL,
-	cod_grav SMALLINT NOT NULL,
-	nome VARCHAR(50) NOT NULL,
-	descr VARCHAR(100) NOT NULL, 
-	tipo_compra VARCHAR(20) NOT NULL,
-	pr_compra DEC(5,2) NOT NULL,
-	dt_compra DATE NOT NULL,
-	dt_gravacao DATE NOT NULL,
-	
-	CONSTRAINT PK_ALBM PRIMARY KEY (cod),
-	CONSTRAINT FK_GRAV_ALBM FOREIGN KEY (cod_grav) REFERENCES gravadora,
-	CONSTRAINT TIPO_DA_COMPRA CHECK (tipo_compra LIKE '__sica' or tipo_compra LIKE '_ownload'),
-	CONSTRAINT DATA_COMPRA_SEC_XXI CHECK (dt_compra > '2000-01-01')
 
 ) ON BDSpotPer_fg01;
 
