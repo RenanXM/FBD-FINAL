@@ -3,6 +3,9 @@ INSERT INTO gravadora (cod, endereco, pagina, nome) VALUES (2, 'Rua B, 456', 'ww
 INSERT INTO gravadora (cod, endereco, pagina, nome) VALUES (3, 'Rua C, 789', 'www.gravadora3.com.br', 'Gravadora 3');
 INSERT INTO gravadora (cod, endereco, pagina, nome) VALUES (4, 'Rua D, 123', 'www.gravadora4.com.br', 'Gravadora 4');
 INSERT INTO gravadora (cod, endereco, pagina, nome) VALUES (5, 'Rua E, 456', 'www.gravadora5.com.br', 'Gravadora 5');
+INSERT INTO gravadora (cod, endereco, pagina, nome) VALUES (6, 'Rua C, 789', 'www.gravadora3.com.br', 'Gravadora 3');
+INSERT INTO gravadora (cod, endereco, pagina, nome) VALUES (7, 'Rua D, 123', 'www.gravadora4.com.br', 'Gravadora 4');
+INSERT INTO gravadora (cod, endereco, pagina, nome) VALUES (8, 'Rua E, 456', 'www.gravadora5.com.br', 'Gravadora 5');
 
 INSERT INTO album (cod, cod_grav, nome, descr, tipo_compra, pr_compra, dt_compra, dt_gravacao) VALUES (1, 1, 'Album 1', 'Descrição do Album 1', 'fisica', 10.00, '2023-12-01', '2023-11-01');
 INSERT INTO album (cod, cod_grav, nome, descr, tipo_compra, pr_compra, dt_compra, dt_gravacao) VALUES (2, 2, 'Album 2', 'Descrição do Album 2', 'download', 5.00, '2023-12-02', '2023-11-02');
@@ -27,6 +30,7 @@ INSERT INTO faixa (numero, cod_album, descr, tempo, tipo_composicao, tipo_grav) 
 INSERT INTO faixa (numero, cod_album, descr, tempo, tipo_composicao, tipo_grav) VALUES (3, 2, 'Descrição da Faixa 3', '00:03:45', 3, 'ADD');
 INSERT INTO faixa (numero, cod_album, descr, tempo, tipo_composicao, tipo_grav) VALUES (4, 2, 'Descrição da Faixa 4', '00:03:30', 4, 'ADD');
 INSERT INTO faixa (numero, cod_album, descr, tempo, tipo_composicao, tipo_grav) VALUES (5, 2, 'Descrição da Faixa 5', '00:04:00', 5, 'DDD');
+
 
 INSERT INTO playlist (cod, nome, dt_criacao, dt_ult_reprod, num_reprod, tempo) VALUES (1, 'Playlist 1', '2023-12-01', '2023-12-02', 10, '00:20:00');
 INSERT INTO playlist (cod, nome, dt_criacao, dt_ult_reprod, num_reprod, tempo) VALUES (2, 'Playlist 2', '2023-12-02', '2023-12-03', 15, '00:30:00');
