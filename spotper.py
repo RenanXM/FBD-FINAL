@@ -75,8 +75,8 @@ def albums_menu(connection):
             # Função que gerencia as faixas do Album
             album_tracks_menu(connection, albums)
 
-        elif choice == 0:
-            break
+        #elif choice == 0:
+            #break
 
 
 # playlists_menu
@@ -113,8 +113,8 @@ def playlists_menu(connection):
         elif choice == 5:
             # Função para deletar uma playlist
             delete_playlist(connection, playlists)
-        elif choice == 0:
-            break
+        #elif choice == 0:
+            #break
 
 
 # qusetion_7_menu
@@ -212,8 +212,8 @@ def album_tracks_menu(connection, albums):
         if choice == 1:
             # Po mermão tem q fazer tbm
             add_track_to_playlist(connection, album_code, tracks)
-        elif choice == 0:
-            break
+        #elif choice == 0:
+            #break
     
 
 # playlist_tracks_menu
@@ -244,8 +244,8 @@ def playlist_tracks_menu(connection, playlists):
             add_track_to_playlist(connection, playlist_code, tracks)
         elif choice == 3:
             delete_track_from_playlist(connection, playlist_code, tracks)
-        elif choice == 0:
-            break
+        #elif choice == 0:
+            #break
 
 
 ####################################################################################
