@@ -37,7 +37,7 @@ def main_menu(connection):
         print_menu_options(["Albuns", "Playlists", "Questão 7", "Buscar Albuns por Compositor(função)"])
 
         # select_menu_option -> Function to select an option on the menu
-        choice = select_menu_option("\n [ ] ", ["Albuns", "Playlists", "Questão 7"])
+        choice = select_menu_option("\n [ ] ", ["Albuns", "Playlists", "Questão 7", "Buscar Albuns por Compositor(função)"])
 
         if choice == 1:
             albums_menu(connection)
