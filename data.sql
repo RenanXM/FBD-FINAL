@@ -20,7 +20,10 @@ VALUES (1, 'Descrição do Álbum 1', 1, 10.00, '2023-12-04', '2023-12-04', 'Tip
        (2, 'Descrição do Álbum 2', 2, 20.00, '2023-12-04', '2023-12-04', 'Tipo de Compra 2', 'Nome do Álbum 2'),
        (3, 'Descrição do Álbum 3', 3, 30.00, '2023-12-04', '2023-12-04', 'Tipo de Compra 3', 'Nome do Álbum 3'),
        (4, 'Descrição do Álbum 4', 4, 40.00, '2023-12-04', '2023-12-04', 'Tipo de Compra 4', 'Nome do Álbum 4'),
-       (5, 'Descrição do Álbum 5', 5, 50.00, '2023-12-04', '2023-12-04', 'Tipo de Compra 5', 'Nome do Álbum 5');
+       (5, 'Descrição do Álbum 5', 5, 50.00, '2023-12-04', '2023-12-04', 'Tipo de Compra 5', 'Nome do Álbum 5'),
+       (6, 'Dvorak Album 1', 5, 50.00, '2023-12-04', '2023-12-04', 'Tipo de Compra 5', 'Album1Dv'),
+       (7, 'Dvorak Album 2', 5, 50.00, '2023-12-04', '2023-12-04', 'Tipo de Compra 5', 'Album2Dv'),
+       (8, 'Dvorak Album 3', 3, 50.00, '2023-12-04', '2023-12-04', 'Tipo de Compra 5', 'Album3Dv');
 
 -- Inserindo na tabela meio_fisico
 INSERT INTO meio_fisico (cod, tipo, cod_album)
@@ -28,7 +31,10 @@ VALUES (1, 'Tipo do Meio Físico 1', 1),
        (2, 'Tipo do Meio Físico 2', 2),
        (3, 'Tipo do Meio Físico 3', 3),
        (4, 'Tipo do Meio Físico 4', 4),
-       (5, 'Tipo do Meio Físico 5', 5);
+       (5, 'Tipo do Meio Físico 5', 5),
+       (6, 'Download', 6),
+       (7, 'Download', 7),
+       (8, 'Download', 8);
 
 -- Inserindo na tabela composicao
 INSERT INTO composicao (cod, descr, tipo_comp)
@@ -44,7 +50,10 @@ VALUES (1, 1, 'Descrição da Faixa 1', '00:03:30', 1, 1, 'Tipo de Gravação 1'
        (2, 2, 'Descrição da Faixa 2', '00:03:30', 2, 2, 'Tipo de Gravação 2'),
        (3, 3, 'Descrição da Faixa 3', '00:03:30', 3, 3, 'Tipo de Gravação 3'),
        (4, 4, 'Descrição da Faixa 4', '00:03:30', 4, 4, 'Tipo de Gravação 4'),
-       (5, 5, 'Descrição da Faixa 5', '00:03:30', 5, 5, 'Tipo de Gravação 5');
+       (5, 5, 'Descrição da Faixa 5', '00:03:30', 5, 5, 'Tipo de Gravação 5'),
+       (6, 6, 'Faixa do Dvorak 1', '00:03:30', 6, 5, 'Tipo de Gravação 5'),
+       (7, 7, 'Faixa do Dvorak 2', '00:03:30', 7, 5, 'Tipo de Gravação 5'),
+       (8, 8, 'Faixa do Dvorak 3', '00:03:30', 8, 5, 'Tipo de Gravação 5');
 
 -- Inserindo na tabela meio_fisico_faixa
 INSERT INTO meio_fisico_faixa (cod, cod_meio_fisico, cod_faixa, numero_faixa, tipo_gravacao)
@@ -52,7 +61,10 @@ VALUES (1, 1, 1, 1, 'ADD'),
        (2, 2, 2, 2, 'ADD'),
        (3, 3, 3, 3, 'ADD'),
        (4, 4, 4, 4, 'ADD'),
-       (5, 5, 5, 5, 'ADD');
+       (5, 5, 5, 5, 'ADD'),
+       (6, 6, 6, 6, 'ADD'),
+       (7, 7, 7, 7, 'DDD'),
+       (8, 8, 8, 8, 'DDD');
 
 -- Inserindo na tabela periodo_musc
 INSERT INTO periodo_musc (cod, descr, inicio_periodo, fim_periodo)
@@ -68,7 +80,8 @@ VALUES (1, 'Compositor 1', 'Cidade 1', 'País 1', '1800-01-01', '1850-12-31', 1)
        (2, 'Compositor 2', 'Cidade 2', 'País 2', '1800-01-01', '1850-12-31', 2),
        (3, 'Compositor 3', 'Cidade 3', 'País 3', '1800-01-01', '1850-12-31', 3),
        (4, 'Compositor 4', 'Cidade 4', 'País 4', '1800-01-01', '1850-12-31', 4),
-       (5, 'Compositor 5', 'Cidade 5', 'País 5', '1800-01-01', '1850-12-31', 5);
+       (5, 'Compositor 5', 'Cidade 5', 'País 5', '1800-01-01', '1850-12-31', 5),
+       (6, 'Dvorak', 'CidadeDvorak', 'PaisDvorak', '1980-01-01', '2020-12-31', 5);
 
 -- Inserindo na tabela interprete
 INSERT INTO interprete (cod, nome, tipo)
@@ -92,7 +105,10 @@ VALUES (1, 1, 1),
        (2, 2, 2),
        (3, 3, 3),
        (4, 4, 4),
-       (5, 5, 5);
+       (5, 5, 5),
+       (6, 6, 6),
+       (7, 7, 6),
+       (8, 8, 6);
 
 -- Inserindo na tabela playlist
 INSERT INTO playlist (cod, nome, dt_criacao, dt_ult_reprod, num_reprod, tempo)
@@ -100,7 +116,10 @@ VALUES (1, 'Playlist 1', '2023-12-04', '2023-12-04', 1, '00:03:30'),
        (2, 'Playlist 2', '2023-12-04', '2023-12-04', 2, '00:03:30'),
        (3, 'Playlist 3', '2023-12-04', '2023-12-04', 3, '00:03:30'),
        (4, 'Playlist 4', '2023-12-04', '2023-12-04', 4, '00:03:30'),
-       (5, 'Playlist 5', '2023-12-04', '2023-12-04', 5, '00:03:30');
+       (5, 'Playlist 5', '2023-12-04', '2023-12-04', 5, '00:03:30'),
+       (7, 'Playlist Dvorak1', '2023-12-04', '2023-12-04', 5, '00:03:30'),
+       (8, 'Playlist Dvorak2', '2023-12-04', '2023-12-04', 5, '00:03:30'),
+       (9, 'Playlist Dvorak3', '2023-12-04', '2023-12-04', 5, '00:03:30');
 
 -- Inserindo na tabela faixa_playlist
 INSERT INTO faixa_playlist (cod, cod_faixa, cod_playlist)
@@ -108,7 +127,13 @@ VALUES (1, 1, 1),
        (2, 2, 2),
        (3, 3, 3),
        (4, 4, 4),
-       (5, 5, 5);
+       (5, 5, 5),
+       (6, 6, 7),
+       (7, 6, 8),
+       (8, 7, 8),
+       (9, 6, 9),
+      (10, 7, 9),
+      (11, 8, 9);
 
 
 -- INSERT INTO gravadora (cod, endereco, pagina, nome) VALUES (1, 'Rua A, 123', 'www.gravadora1.com.br', 'Gravadora 1');

@@ -74,8 +74,19 @@ CREATE VIEW compositor_por_playlist
 AS
 SELECT c.nome, SUM(qtd_playlists) sum_qtd_playlists FROM compositor_e_faixas c GROUP BY c.cod, c.nome
 
-CREATE VIEW setec AS
-SELECT c.nome, sum_qtd_playlists FROM compositor_por_playlist c WHERE sum_qtd_playlists >= all (SELECT sum_qtd_playlists FROM compositor_por_playlist)
+-- c. Listar nome do compositor com maior número de faixas nas playlists
+-- existentes.
+-- CREATE VIEW setec AS
+-- SELECT c.nome, sum_qtd_playlists FROM compositor_por_playlist c WHERE sum_qtd_playlists >= all (SELECT sum_qtd_playlists FROM compositor_por_playlist)
+create view setec as
+select top 1 c.nome, count (fp.cod_faixa) as qtd_faixa
+from compositor c
+inner join faixa_compositor fc on c.cod =  fc.cod
+inner join faixa f on fc.cod_faixa = f.cod
+inner join faixa_playlist fp on f.cod = fp.cod_faixa
+group by c.nome
+order by qtd_faixa desc
+
 
 CREATE VIEW faixa_concerto_barroca
 AS
@@ -87,6 +98,9 @@ SELECT f.cod_album, f.numero, co.nome
 		 INNER JOIN periodo_musc pm ON cpm.cod_periodo=pm.cod AND pm.descr LIKE 'Barroco'
 	GROUP BY f.cod_album, f.numero, co.nome
 
+
+-- d. Listar playlists, cujas faixas (todas) têm tipo de composição “Concerto” e 
+-- período “Barroco”
 CREATE VIEW seted
 AS
 SELECT DISTINCT p.cod, p.nome, p.dt_criacao, p.dt_ult_reprod, p.num_reprod

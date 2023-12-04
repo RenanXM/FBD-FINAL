@@ -71,8 +71,8 @@ def albums_menu(connection):
             # Função que gerencia as faixas do Album
             album_tracks_menu(connection, albums)
 
-        #elif choice == 0:
-            #break
+        elif choice == 0:
+            break
 
 
 # playlists_menu
@@ -109,8 +109,8 @@ def playlists_menu(connection):
         elif choice == 5:
             # Função para deletar uma playlist
             delete_playlist(connection, playlists)
-        #elif choice == 0:
-            #break
+        elif choice == 0:
+            break
 
 
 # qusetion_7_menu
@@ -175,6 +175,9 @@ def question_7_menu(connection):
 
             except:
                 input("\n Operação Inválida, pressione enter para continuar")
+        
+        elif choice == 5:
+            break
 
 
 
@@ -206,9 +209,11 @@ def album_tracks_menu(connection, albums):
 
     # Tracks será um DataFrame contendo as informações das faixas relacionadas ao álbum especificado
     # pelo código album_code. O DataFrame terá colunas: numero, descr, tempo, composicao, e tipo_grav.
-    tracks = execute_query(connection, f"SELECT numero, descr, tempo, nome as composicao, tipo_grav "
-                                       f"FROM faixa f, composicao c "
-                                       f"WHERE tipo_composicao = cod AND cod_album = {album_code}")
+    tracks = execute_query(connection, f"select f.numero, f.descr, f.tempo_execucao, f.tipo_gravacao from album a "
+                                       f"inner join meio_fisico mf on a.cod = mf.cod_album "
+                                       f"inner join meio_fisico_faixa mfa on mf.cod = mfa.cod_meio_fisico "
+                                       f"inner join faixa f on mfa.cod_faixa = f.cod "
+                                       f"where a.cod = {album_code}")
     
 
     while True:
@@ -217,12 +222,12 @@ def album_tracks_menu(connection, albums):
         print_menu_options(["Adicionar Faixa a Playlist", "Sair"])
 
         choice = select_menu_option("\n [ ] ", ["Adicionar Faixa a Playlist", "Sair"])
-        
+          
         if choice == 1:
             # Po mermão tem q fazer tbm
             add_track_to_playlist(connection, album_code, tracks)
-        #elif choice == 0:
-            #break
+        elif choice == 0:
+            break
     
 
 # playlist_tracks_menu
@@ -236,9 +241,11 @@ def playlist_tracks_menu(connection, playlists):
     # Tracks será um DataFrame contendo as informações das faixas relacionadas ao álbum especificado
     # pelo código album_code. O DataFrame terá colunas: numero, descr, tempo, composicao, e tipo_grav.
 
-    # faixas_playlists = view implementada no .sql
-    tracks = execute_query(connection, f"SELECT numero, descr, tempo, composicao, tipo_grav "
-                                       f"FROM faixas_playlists WHERE cod_playlist = {playlist_code}")
+    tracks = execute_query(connection, f"select mfa.numero_faixa, f.descr, f.tempo_execucao, f.tipo_gravacao "
+                                        f"from meio_fisico_faixa mfa "
+                                        f"inner join faixa f on mfa.cod_faixa = f.cod "
+                                        f"inner join faixa_playlist fp on f.cod = fp.cod_faixa "
+                                       f"where fp.cod_playlist={playlist_code}")
     
     while True:
         print("\n-----------------------------FAIXAS-----------------------------")
@@ -253,8 +260,8 @@ def playlist_tracks_menu(connection, playlists):
             add_track_to_playlist(connection, playlist_code, tracks)
         elif choice == 3:
             delete_track_from_playlist(connection, playlist_code, tracks)
-        #elif choice == 0:
-            #break
+        elif choice == 0:
+            break
 
 
 ####################################################################################
