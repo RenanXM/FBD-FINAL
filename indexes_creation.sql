@@ -1,10 +1,9 @@
-CREATE CLUSTERED INDEX IDP_COD_ALBUM ON faixa(cod_album) WITH (fillfactor=100)
-ALTER TABLE faixa ADD CONSTRAINT PK_FAIXA PRIMARY KEY (numero, cod_album);
-ALTER TABLE faixa_playlist ADD CONSTRAINT FK_FAIXA_FP FOREIGN KEY (numero_faixa, cod_album) REFERENCES faixa ON DELETE CASCADE;
-ALTER TABLE faixa_interprete ADD CONSTRAINT FK_FAIXA_I FOREIGN KEY (numero_faixa, cod_album) REFERENCES faixa ON DELETE CASCADE;
-ALTER TABLE faixa_compositor ADD CONSTRAINT FK_FAIXA_C FOREIGN KEY (numero_faixa, cod_album) REFERENCES faixa ON DELETE CASCADE;
+-- 4) Defina um índice primário para a tabela de Faixas sobre o atributo código do 
+-- álbum. Defina um índice secundário para a mesma tabela sobre o atributo tipo de 
+-- composição. Os dois com taxas de preenchimento máxima.
 
+CREATE CLUSTERED INDEX IDX_COD_ALBUM ON faixa(cod_album) WITH (fillfactor=100)
 CREATE NONCLUSTERED INDEX IDS_FAIXA_TP_COMPOSICAO ON faixa(tipo_composicao) WITH (fillfactor=100)
-ALTER TABLE faixa ADD CONSTRAINT FK_COMPOSICAO_FAIXA FOREIGN KEY (tipo_composicao) REFERENCES composicao
 
-CREATE UNIQUE CLUSTERED INDEX IDP_V5 ON V5(cod_playlist) WITH (fillfactor=100);
+
+-- CREATE UNIQUE CLUSTERED INDEX IDP_V5 ON V5(cod_playlist) WITH (fillfactor=100);
