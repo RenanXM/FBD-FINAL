@@ -2,27 +2,43 @@
 -- a) Um álbum, com faixas de músicas do período barroco, só pode ser inserido no 
 -- banco de dados, caso o tipo de gravação seja DDD.
 
-CREATE VIEW album_com_faixa_barroca_ADD
-AS
-SELECT DISTINCT a.cod, f.numero
-	FROM periodo_musc pm --INNER JOIN compositor_periodo_music cpm ON pm.cod=cpm.cod_periodo AND descr LIKE 'Barroco'
-			INNER JOIN compositor c ON pm.cod=c.cod_periodo_musc
-			INNER JOIN faixa_compositor fc ON c.cod=fc.cod_comp
-			INNER JOIN faixa f ON fc.cod_faixa=f.cod AND f.tipo_grav LIKE 'ADD'
-			INNER JOIN album a ON f.cod_album=a.cod
-	GROUP BY a.cod, f.numero
+-- CREATE VIEW album_com_faixa_barroca_ADD
+-- AS
+-- SELECT DISTINCT a.cod, f.numero
+-- 	FROM periodo_musc pm --INNER JOIN compositor_periodo_music cpm ON pm.cod=cpm.cod_periodo AND descr LIKE 'Barroco'
+-- 			INNER JOIN compositor c ON pm.cod=c.cod_periodo_musc
+-- 			INNER JOIN faixa_compositor fc ON c.cod=fc.cod_comp
+-- 			INNER JOIN faixa f ON fc.cod_faixa=f.cod AND f.tipo_grav LIKE 'ADD'
+-- 			INNER JOIN album a ON f.cod_album=a.cod
+-- 	GROUP BY a.cod, f.numero
 
-CREATE VIEW V5 (cod_playlist, cod_faixa, cod_album, qtd_albuns)
+-- CREATE VIEW V5 (cod_playlist, cod_faixa, cod_album, qtd_albuns)
+-- WITH SCHEMABINDING
+-- AS
+-- SELECT p.cod, f.numero, f.cod_album, COUNT_BIG(*)
+-- 	FROM dbo.playlist p INNER JOIN dbo.faixa_playlist fp ON p.cod=fp.cod_playlist
+-- 		 INNER JOIN dbo.faixa f ON fp.numero_faixa=f.numero
+-- 	GROUP BY p.cod, f.numero, f.cod_album
+
+
+
+-- 5) Criar uma visão materializada que tem como atributos o nome da playlist e a 
+-- quantidade de álbuns que a compõem.
+CREATE VIEW V5 
 WITH SCHEMABINDING
 AS
-SELECT p.cod, f.numero, f.cod_album, COUNT_BIG(*)
-	FROM dbo.playlist p INNER JOIN dbo.faixa_playlist fp ON p.cod=fp.cod_playlist
-		 INNER JOIN dbo.faixa f ON fp.numero_faixa=f.numero
-	GROUP BY p.cod, f.numero, f.cod_album
+	SELECT p.nome AS nome_playlist, COUNT(DISTINCT a.cod) AS qtd_albuns
+	FROM dbo.playlist p
+	INNER JOIN dbo.faixa_playlist fp ON p.cod = fp.cod_playlist
+	INNER JOIN dbo.faixa f ON fp.cod_faixa = f.cod
+	INNER JOIN dbo.meio_fisico_faixa mfa ON f.cod = mfa.cod_faixa
+	INNER JOIN dbo.meio_fisico mf ON mfa.cod_meio_fisico = mf.cod
+	INNER JOIN dbo.album a ON mf.cod_album = a.cod
+	GROUP BY p.nome
 
-CREATE VIEW V5b (nome_playlist, qtd_album)
-AS
-SELECT p.nome, COUNT(cod_album) FROM V5 INNER JOIN playlist p ON p.cod=cod_playlist GROUP BY cod_playlist, p.nome
+-- CREATE VIEW V5b (nome_playlist, qtd_album)
+-- AS
+-- SELECT p.nome, COUNT(cod_album) FROM V5 INNER JOIN playlist p ON p.cod=cod_playlist GROUP BY cod_playlist, p.nome
 
 CREATE VIEW setea AS
 SELECT a.nome, a.pr_compra FROM album a WHERE a.pr_compra >= all (SELECT AVG(pr_compra) FROM album)
