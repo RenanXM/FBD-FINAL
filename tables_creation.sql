@@ -63,7 +63,7 @@ CREATE TABLE meio_fisico (
 -- identificador e a descrição. O tipo deve caracterizar se a obra gravada é uma         OK
 -- sinfonia, ópera, sonata, concerto e assim por diante. É obrigatório identificar o     OK
 -- tipo de composição para cada faixa existente. Uma faixa só pode apresentar            OK CONSTRAINT EM FAIXA
--- um tipo de composição.
+-- um tipo de composição. 	
 
 CREATE TABLE composicao(
 	cod SMALLINT NOT NULL,

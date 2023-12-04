@@ -44,6 +44,8 @@ END
 -- 	END
 -- END
 
+
+-- b) Um álbum não pode ter mais que 64 faixas (músicas).
 CREATE TRIGGER MAX_FAIXAS ON faixa FOR INSERT, UPDATE
 AS
 BEGIN
@@ -61,6 +63,28 @@ BEGIN
 	IF (@QTDE_FAIXAS > 64)
 	BEGIN
 		RAISERROR('Numero maximo de faixas execedido!', 16,1)
+		ROLLBACK TRANSACTION
+	END
+END
+
+
+-- d) O preço de compra de um álbum não dever ser superior a três vezes a média 
+-- do preço de compra de álbuns, com todas as faixas com tipo de gravação 
+-- DDD
+CREATE TRIGGER LIMITE_PRECO ON album
+FOR INSERT, UPDATE
+AS
+BEGIN
+	IF EXISTS(
+		SELECT * FROM inserted WHERE pr_compra > (
+			SELECT 3 * AVG(pr_compra) 
+			FROM album a INNER JOIN meio_fisico mf ON a.cod = mf.cod_album
+			INNER JOIN meio_fisico_faixa mfa ON mf.cod = mfa.cod_meio_fisico 
+			WHERE mfa.tipo_gravacao LIKE 'DDD'
+		)
+	)
+	BEGIN
+		RAISERROR('O preco de compra de um album nao pode ultrapassar 3x a media do preco de albuns cujas faixas tem tipo de gravacao DDD', 16,1);
 		ROLLBACK TRANSACTION
 	END
 END
