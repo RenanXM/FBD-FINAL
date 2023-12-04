@@ -8,16 +8,10 @@ import os
 
 # Function to connect to the database
 
-# Crie variáveis para suas credenciais de conexão.
-SERVER = 'DESKTOP-UCMJFKJ'
-DATABASE = 'BDSpotPer'
-USERNAME = 'DESKTOP-UCMJFKJ\havil'
-PASSWORD = ''
-
 # Crie uma variável de cadeia de conexão usando interpolação de cadeia de caracteres.
 conn_str = (
     r'DRIVER={ODBC Driver 11 for SQL Server};'
-    r'SERVER=DESKTOP-R31K86D;'
+    r'SERVER=DESKTOP-UCMJFKJ;'
     r'DATABASE=BDSpotPer;'
     r'Trusted_Connection=yes;'
 )
