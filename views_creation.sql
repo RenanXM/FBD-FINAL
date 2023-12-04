@@ -43,24 +43,40 @@ AS
 CREATE VIEW setea AS
 SELECT a.nome, a.pr_compra FROM album a WHERE a.pr_compra >= all (SELECT AVG(pr_compra) FROM album)
 
-CREATE VIEW faixas_de_dvorack
-AS
-SELECT f.numero, f.cod_album
-	FROM compositor c LEFT OUTER JOIN faixa_compositor fc ON c.nome LIKE 'Dvorack' AND c.cod=fc.cod_composit
-		 INNER JOIN faixa f ON f.numero=fc.numero_faixa AND f.cod_album=fc.cod_album
+-- CREATE VIEW faixas_de_dvorack
+-- AS
+-- SELECT f.numero, f.cod_album
+-- 	FROM compositor c LEFT OUTER JOIN faixa_compositor fc ON c.nome LIKE 'Dvorack' AND c.cod=fc.cod_composit
+-- 		 INNER JOIN faixa f ON f.numero=fc.numero_faixa AND f.cod_album=fc.cod_album
 
-CREATE VIEW qtd_playlist_faixas_dvorack
-AS
-SELECT a.cod_grav, g.nome AS nome_grav, a.nome AS nome_album, f.cod_album, f.numero, COUNT(fp.cod_playlist) qtd_playlists
-	FROM faixas_de_dvorack f LEFT OUTER JOIN faixa_playlist fp ON f.numero=fp.numero_faixa AND f.cod_album=fp.cod_album
-		 INNER JOIN album a ON f.cod_album=a.cod
-		 INNER JOIN gravadora g ON a.cod_grav=g.cod
-	GROUP BY a.cod_grav, g.nome, a.nome, f.cod_album, f.numero
+-- CREATE VIEW qtd_playlist_faixas_dvorack
+-- AS
+-- SELECT a.cod_grav, g.nome AS nome_grav, a.nome AS nome_album, f.cod_album, f.numero, COUNT(fp.cod_playlist) qtd_playlists
+-- 	FROM faixas_de_dvorack f LEFT OUTER JOIN faixa_playlist fp ON f.numero=fp.numero_faixa AND f.cod_album=fp.cod_album
+-- 		 INNER JOIN album a ON f.cod_album=a.cod
+-- 		 INNER JOIN gravadora g ON a.cod_grav=g.cod
+-- 	GROUP BY a.cod_grav, g.nome, a.nome, f.cod_album, f.numero
 
-CREATE VIEW seteb AS
-SELECT qpfd.nome_grav, SUM(qtd_playlists) AS qtd_de_faixas_em_playlists FROM qtd_playlist_faixas_dvorack qpfd
-	GROUP BY cod_grav, qpfd.nome_grav
-	HAVING SUM(qtd_playlists) >= all (SELECT SUM(qtd_playlists) FROM qtd_playlist_faixas_dvorack qpfd GROUP BY cod_grav)
+-- CREATE VIEW seteb AS
+-- SELECT qpfd.nome_grav, SUM(qtd_playlists) AS qtd_de_faixas_em_playlists FROM qtd_playlist_faixas_dvorack qpfd
+-- 	GROUP BY cod_grav, qpfd.nome_grav
+-- 	HAVING SUM(qtd_playlists) >= all (SELECT SUM(qtd_playlists) FROM qtd_playlist_faixas_dvorack qpfd GROUP BY cod_grav)
+
+create view seteb
+as
+select top 1 g.nome, count(distinct p.cod) as qtd_playlists
+from gravadora g
+inner join album a on a.cod_grav = g.cod
+inner join meio_fisico mf on a.cod = mf.cod_album
+inner join meio_fisico_faixa mfa on mf.cod = mfa.cod_meio_fisico
+inner join faixa f on mfa.cod_faixa = f.cod
+inner join faixa_compositor fc on f.cod = fc.cod_faixa
+inner join compositor c on fc.cod_comp = c.cod
+inner join faixa_playlist fp on f.cod = fp.cod_faixa
+inner join playlist p on fp.cod_playlist = p.cod
+where c.nome LIKE 'Dvorak'
+group by g.nome
+order by qtd_playlists desc
 
 CREATE VIEW compositor_e_faixas
 AS
@@ -110,7 +126,7 @@ SELECT f.cod_album, f.numero, co.nome
 -- 	having dbo.eh_concerto_barroca(f.numero, f.cod_album) = 1
 create view seted
 as
-select distinct p.cod, p.nome, p.dt_criacao, p.dt_ult_reprod, p.num_reprod, p.tempo
+select distinct p.cod, p.nome, p.dt_criacao, p.dt_ult_reprod, p.num_reprod, p.tempo, f.descr
 from playlist p
 inner join faixa_playlist fp on p.cod = fp.cod_playlist
 inner join faixa f on fp.cod_faixa = f.cod
@@ -118,7 +134,7 @@ inner join composicao c on f.cod_tipo_composicao = c.cod
 inner join faixa_compositor fc on f.cod = fc.cod_faixa
 inner join compositor cr on fc.cod_comp = cr.cod
 inner join periodo_musc pm on cr.cod_periodo_musc = pm.cod
-where c.descr LIKE '_oncerto' and pm.descr LIKE '_arroco'
+where c.descr LIKE 'Conserto' and pm.descr LIKE 'Barroco'
 
 
 CREATE VIEW faixas_playlists

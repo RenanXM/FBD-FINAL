@@ -329,17 +329,22 @@ def delete_playlist(connection, playlists):
 
 # add track to playlist
 
-def add_track_to_playlist(connection, album_code, tracks):
-
-    selected_row = print_table_and_return_selected_row(tracks, "Selecione a Linha da Faixa: ")
-    track_number = tracks['numero'][selected_row - 1]
-    playlists = execute_query(connection, "SELECT cod, nome, dt_criacao, dt_ult_reprod, num_reprod FROM playlist")
-    print("\n-----------------------PLAYLISTS-------------------------")
-    print(playlists)
-    selected_row = print_table_and_return_selected_row(playlists, "Selecione a Linha da Playlist: ")
-    playlist_code = playlists['cod'][selected_row - 1]
+def add_track_to_playlist(connection, playlist_code, tracks):
+    query_string = f"select numero, descr, tempo_execucao, tipo_gravacao from faixa inner join (select distinct cod_faixa from faixa_playlist where cod_playlist != {playlist_code}) as faixas_fora_da_playlist on faixa.cod = cod_faixa"
+    unused_tracks = execute_query(connection, query_string)
+    selected_row = print_table_and_return_selected_row(unused_tracks, "Selecione a Linha da Faixa: ")
+    track_number = unused_tracks['numero'][selected_row - 1]
+    
+    # print("\n-----------------------PLAYLISTS-------------------------")
+    # print(playlists)
+    # selected_row = print_table_and_return_selected_row(playlists, "Selecione a Linha da Playlist: ")
+    # playlist_code = playlists['cod'][selected_row - 1]
     cursor = connection.cursor()
-    cursor.execute(f"INSERT INTO faixa_playlist VALUES ({track_number},{album_code},{playlist_code})")
+    last_id = execute_query(connection, "select top 1 cod from faixa_playlist order by cod desc")
+    print(last_id['cod'][0])
+    cursor.execute(f"INSERT INTO faixa_playlist (cod, cod_faixa, cod_playlist) VALUES ({last_id['cod'][0]+1},{track_number},{playlist_code})")
+    # playlists = execute_query(connection, f"SELECT cod, nome, dt_criacao, dt_ult_reprod, num_reprod FROM playlist WHERE cod = {playlist_code}")
+    # print(playlists)
     cursor.commit()
     cursor.close()
 
