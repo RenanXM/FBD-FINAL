@@ -57,7 +57,7 @@ CREATE TABLE meio_fisico (
 
 	CONSTRAINT PK_MEIO_FISICO PRIMARY KEY(cod),
 	CONSTRAINT FK_COD_ALBUM_MF FOREIGN KEY (cod_album) REFERENCES album
-)
+)  ON BDSpotPer_fg01;
 
 -- Para cada tipo de composição, devem estar associados um código                        OK
 -- identificador e a descrição. O tipo deve caracterizar se a obra gravada é uma         OK
@@ -111,7 +111,7 @@ CREATE TABLE meio_fisico_faixa (
 	CONSTRAINT FK_COD_MEIO_FISICO_MFA FOREIGN KEY (cod_meio_fisico) REFERENCES meio_fisico,
 	CONSTRAINT FK_COD_FAIXA_MFA FOREIGN KEY (cod_faixa) REFERENCES faixa,
 	CONSTRAINT ADD_OU_DDD CHECK (tipo_gravacao LIKE 'ADD' or tipo_gravacao LIKE 'DDD')
-)
+)  ON BDSpotPer_fg01;
 
 
 -- COMPOSITORES E INTERPRETES
