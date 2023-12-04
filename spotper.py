@@ -1,6 +1,12 @@
+# EQUIPE: RENAN XEREZ MARQUES - 508682 | HAVILLON BARROS FREITAS - 508017
+
+
 import pyodbc as SQL
 import pandas as pd
 import os
+import warnings
+
+warnings.filterwarnings('ignore')
 
 
 # Bureaucracy:

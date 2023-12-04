@@ -1,3 +1,5 @@
+-- EQUIPE: RENAN XEREZ MARQUES - 508682 | HAVILLON BARROS FREITAS - 508017
+
 -- Inserindo na tabela gravadora
 INSERT INTO gravadora (cod, endereco, pagina, nome)
 VALUES (1, 'Endereço da Gravadora 1', 'www.gravadora1.com', 'Nome da Gravadora 1'),
@@ -35,6 +37,8 @@ VALUES (1, 'Tipo do Meio Físico 1', 1),
        (6, 'Download', 6),
        (7, 'Download', 7),
        (8, 'Download', 8);
+
+-- EQUIPE: RENAN XEREZ MARQUES - 508682 | HAVILLON BARROS FREITAS - 508017
 
 -- Inserindo na tabela composicao
 INSERT INTO composicao (cod, descr, tipo_comp)

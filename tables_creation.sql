@@ -1,3 +1,5 @@
+-- EQUIPE: RENAN XEREZ MARQUES - 508682 | HAVILLON BARROS FREITAS - 508017
+
 USE BDSpotPer;
 
 -- Para cada gravadora, estão associados um código, nome, endereço, telefones        OK

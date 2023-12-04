@@ -1,3 +1,5 @@
+-- EQUIPE: RENAN XEREZ MARQUES - 508682 | HAVILLON BARROS FREITAS - 508017
+
 -- a) Um álbum, com faixas de músicas do período barroco, só pode ser inserido no 
 -- banco de dados, caso o tipo de gravação seja DDD.
 

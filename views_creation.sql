@@ -1,3 +1,5 @@
+-- EQUIPE: RENAN XEREZ MARQUES - 508682 | HAVILLON BARROS FREITAS - 508017
+
 -- 5) Criar uma visão materializada que tem como atributos o nome da playlist e a 
 -- quantidade de álbuns que a compõem.
 CREATE VIEW V5 
