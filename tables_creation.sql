@@ -67,7 +67,7 @@ CREATE TABLE meio_fisico (
 
 CREATE TABLE composicao(
 	cod SMALLINT NOT NULL,
-	descr VARCHAR(100) NOT NULL,
+	descr VARCHAR(100) NOT NULL, -- sinfonia, ópera, sonata, concerto, etc
 	tipo_comp VARCHAR(50) NOT NULL,
 	CONSTRAINT PK_COMPOSICAO PRIMARY KEY (cod)
 

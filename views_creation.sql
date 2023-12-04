@@ -101,13 +101,25 @@ SELECT f.cod_album, f.numero, co.nome
 
 -- d. Listar playlists, cujas faixas (todas) têm tipo de composição “Concerto” e 
 -- período “Barroco”
-CREATE VIEW seted
-AS
-SELECT DISTINCT p.cod, p.nome, p.dt_criacao, p.dt_ult_reprod, p.num_reprod
-	FROM playlist p INNER JOIN faixa_playlist fp ON p.cod=fp.cod_playlist
-		 INNER JOIN faixa f ON f.numero=fp.numero_faixa AND f.cod_album=fp.cod_album
-	GROUP BY p.cod, p.nome, p.dt_criacao, p.dt_ult_reprod, p.num_reprod, p.tempo, f.numero, f.cod_album
-	having dbo.eh_concerto_barroca(f.numero, f.cod_album) = 1
+-- CREATE VIEW seted
+-- AS
+-- SELECT DISTINCT p.cod, p.nome, p.dt_criacao, p.dt_ult_reprod, p.num_reprod
+-- 	FROM playlist p INNER JOIN faixa_playlist fp ON p.cod=fp.cod_playlist
+-- 		 INNER JOIN faixa f ON f.numero=fp.numero_faixa AND f.cod_album=fp.cod_album
+-- 	GROUP BY p.cod, p.nome, p.dt_criacao, p.dt_ult_reprod, p.num_reprod, p.tempo, f.numero, f.cod_album
+-- 	having dbo.eh_concerto_barroca(f.numero, f.cod_album) = 1
+create view seted
+as
+select distinct p.cod, p.nome, p.dt_criacao, p.dt_ult_reprod, p.num_reprod, p.tempo
+from playlist p
+inner join faixa_playlist fp on p.cod = fp.cod_playlist
+inner join faixa f on fp.cod_faixa = f.cod
+inner join composicao c on f.cod_tipo_composicao = c.cod
+inner join faixa_compositor fc on f.cod = fc.cod_faixa
+inner join compositor cr on fc.cod_comp = cr.cod
+inner join periodo_musc pm on cr.cod_periodo_musc = pm.cod
+where c.descr LIKE '_oncerto' and pm.descr LIKE '_arroco'
+
 
 CREATE VIEW faixas_playlists
 AS
