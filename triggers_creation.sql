@@ -25,26 +25,6 @@ BEGIN
     END
 END
 
--- CREATE TRIGGER BARROCO_COM_DDD_FC ON faixa_compositor FOR INSERT, UPDATE
--- AS
--- IF EXISTS (SELECT cod_album FROM inserted WHERE cod_album IN (SELECT DISTINCT cod FROM album_com_faixa_barroca_ADD))
--- BEGIN
--- 	RAISERROR('Um álbum, com faixas de músicas do período barroco, só pode ser adquirido, caso o tipo de gravação seja DDD!', 16, 1)
--- 	ROLLBACK TRANSACTION
--- END
-
--- CREATE TRIGGER BARROCO_COM_DDD_F ON faixa FOR INSERT, UPDATE
--- AS
--- IF UPDATE(tipo_composicao) OR UPDATE(tipo_grav)
--- BEGIN
--- 	IF EXISTS (SELECT cod_album FROM inserted where cod_album in (SELECT DISTINCT cod FROM album_com_faixa_barroca_ADD))
--- 	BEGIN
--- 		RAISERROR('Um álbum, com faixas de músicas do período barroco, só pode ser adquirido, caso o tipo de gravação seja DDD!', 16, 1)
--- 		ROLLBACK TRANSACTION
--- 	END
--- END
-
-
 -- b) Um álbum não pode ter mais que 64 faixas (músicas).
 CREATE TRIGGER MAX_FAIXAS ON faixa FOR INSERT, UPDATE
 AS
@@ -67,6 +47,11 @@ BEGIN
 	END
 END
 
+-- c) No caso de remoção de um álbum do banco de dados, todas as suas faixas 
+-- devem ser removidas. Lembre-se que faixas podem apresentar, por sua vez, 
+-- outros relacionamentos.
+
+-- REALIZADA USANDO ON DELETE CASCADE
 
 -- d) O preço de compra de um álbum não dever ser superior a três vezes a média 
 -- do preço de compra de álbuns, com todas as faixas com tipo de gravação 

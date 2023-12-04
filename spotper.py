@@ -34,10 +34,10 @@ def main_menu(connection):
     while True:
 
         # print_menu_options -> Just print the options of one menu.
-        print_menu_options(["Albuns", "Playlists", "Questão 7", "Buscar Albuns por Compositor(função)"])
+        print_menu_options(["Albuns", "Playlists", "Questão 7", "Buscar Albuns por Compositor(função)", "Albuns por playlist"])
 
         # select_menu_option -> Function to select an option on the menu
-        choice = select_menu_option("\n [ ] ", ["Albuns", "Playlists", "Questão 7", "Buscar Albuns por Compositor(função)"])
+        choice = select_menu_option("\n [ ] ", ["Albuns", "Playlists", "Questão 7", "Buscar Albuns por Compositor(função)", "Albuns por playlist"])
 
         if choice == 1:
             albums_menu(connection)
@@ -47,6 +47,8 @@ def main_menu(connection):
             question_7_menu(connection)
         if choice == 4:
             search_albums_by_composer(connection)
+        if choice == 5:
+            albums_by_playlist(connection)
         elif choice == 0:
             break
 
@@ -190,7 +192,13 @@ def search_albums_by_composer(connection):
     print(albums)
     input("\n Pressione enter para voltar")
 
-
+# albuns por playlist (UTILIZANDO A VIEW)
+def albums_by_playlist(connection):
+    
+    albums = execute_query(connection, f"SELECT * FROM V5")
+    print("\n-----------------------------QTD DE ALBUNS POR PLAYLIST - VIEW QUESTÃO 5-----------------------------")
+    print(albums)
+    input("\n Pressione enter para voltar")
 
             
 ####################################################################################
